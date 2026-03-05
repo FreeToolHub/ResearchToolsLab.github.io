@@ -347,6 +347,304 @@ input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;b
  <article class="content-card">
   <div class="content-inner">
 
+
+<!-- ═══════════════════════════════════════════════════════════
+     PLACEMENT 1: "Guides & Resources" Section
+     
+     ADD THIS AFTER your existing tools grid section
+     but BEFORE your footer.
+     
+     This creates a new content category on your homepage
+     that signals topical authority to Google while keeping
+     tools as the primary focus.
+═══════════════════════════════════════════════════════════ -->
+
+<!-- ── GUIDES & RESOURCES SECTION ── -->
+<section class="guides-section" aria-label="Research guides and resources">
+ <div class="guides-wrap">
+
+  <div class="section-header">
+   <span class="section-overline">📚 Guides &amp; Resources</span>
+   <h2 class="section-title">In-Depth <em>Research Guides</em></h2>
+   <p class="section-sub">Data-backed guides covering creator economics, research methodology, and academic tools. Written by the same team that builds our verified calculators.</p>
+  </div>
+
+  <div class="guides-grid">
+
+   <!-- ★ YOUTUBE ADSENSE REVENUE SHARE — PRIMARY CARD (Featured) -->
+   <a href="/youtube-adsense-revenue-share-percentage-for-creators.html" class="guide-card guide-card-featured">
+    <div class="guide-card-badge">FEATURED GUIDE</div>
+    <div class="guide-card-icon">▶</div>
+    <div class="guide-card-content">
+     <h3>YouTube AdSense Revenue Share Percentage for Creators (2026)</h3>
+     <p>Complete breakdown of how YouTube splits AdSense revenue with creators. The 55/45 split explained, Shorts revenue share, RPM vs CPM, earnings by niche, and how to maximize your YouTube income.</p>
+     <div class="guide-card-meta">
+      <span class="guide-tag">Creator Economy</span>
+      <span class="guide-tag">Revenue Data</span>
+      <span class="guide-reading">18 min read</span>
+     </div>
+    </div>
+    <div class="guide-card-arrow">→</div>
+   </a>
+
+   <!-- Future guides go here — placeholders to show the section isn't a one-off -->
+   <a href="/youtube-adsense-revenue-share-percentage-for-creators.html" class="guide-card">
+    <div class="guide-card-icon">💰</div>
+    <div class="guide-card-content">
+     <h3>YouTube CPM Rates by Niche</h3>
+     <p>How much YouTube pays per 1,000 views in finance, tech, gaming, health, education, and 8 other niches. Real RPM data after the 55% revenue share.</p>
+     <div class="guide-card-meta">
+      <span class="guide-tag">Earnings Data</span>
+      <span class="guide-reading">5 min read</span>
+     </div>
+    </div>
+    <div class="guide-card-arrow">→</div>
+   </a>
+
+
+  </div>
+
+ </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CSS for the Guides Section
+     
+     ADD THIS to your existing <style> block on the index page,
+     or place it in a <style> tag before the section.
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+/* ── GUIDES SECTION ── */
+.guides-section{
+ padding:3rem 0 1rem;
+ margin-top:1rem;
+}
+.guides-wrap{
+ max-width:1200px;
+ margin:0 auto;
+ padding:0 2rem;
+}
+.section-header{
+ text-align:center;
+ margin-bottom:2rem;
+}
+.section-overline{
+ font-family:var(--mono);
+ font-size:.72rem;
+ font-weight:500;
+ letter-spacing:.12em;
+ text-transform:uppercase;
+ color:var(--ink4);
+ display:block;
+ margin-bottom:.5rem;
+}
+.section-title{
+ font-family:var(--serif);
+ font-size:clamp(1.5rem,3.5vw,2rem);
+ font-weight:900;
+ color:var(--ink);
+ letter-spacing:-.04em;
+ margin-bottom:.5rem;
+ line-height:1.15;
+}
+.section-title em{
+ color:var(--rust);
+ font-style:italic;
+}
+.section-sub{
+ font-size:.9rem;
+ color:var(--ink3);
+ max-width:550px;
+ margin:0 auto;
+ font-weight:300;
+ line-height:1.7;
+}
+.guides-grid{
+ display:grid;
+ grid-template-columns:1fr;
+ gap:1rem;
+}
+
+/* ── Guide Card ── */
+.guide-card{
+ display:flex;
+ align-items:center;
+ gap:1.25rem;
+ background:var(--white);
+ border:1px solid var(--border);
+ border-radius:var(--r-lg);
+ padding:1.25rem 1.5rem;
+ text-decoration:none;
+ color:var(--ink);
+ transition:all .22s;
+ position:relative;
+ overflow:hidden;
+}
+.guide-card:hover{
+ border-color:var(--rust);
+ box-shadow:var(--shadow-md);
+ transform:translateY(-2px);
+}
+.guide-card:hover .guide-card-arrow{
+ color:var(--rust);
+ transform:translateX(4px);
+}
+
+/* Featured card — larger, with badge */
+.guide-card-featured{
+ background:linear-gradient(135deg, var(--white) 0%, rgba(200,68,26,.03) 100%);
+ border:1.5px solid rgba(200,68,26,.2);
+ padding:1.5rem 1.75rem;
+}
+.guide-card-featured h3{
+ font-size:1.1rem;
+}
+.guide-card-badge{
+ position:absolute;
+ top:0;
+ right:0;
+ background:var(--rust);
+ color:#fff;
+ font-family:var(--mono);
+ font-size:.58rem;
+ font-weight:600;
+ letter-spacing:.1em;
+ padding:.3rem .75rem;
+ border-radius:0 0 0 var(--r-sm);
+}
+.guide-card-icon{
+ font-size:2rem;
+ flex-shrink:0;
+ width:52px;
+ height:52px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:var(--cream);
+ border-radius:var(--r-md);
+ border:1px solid var(--border);
+}
+.guide-card-content{
+ flex:1;
+ min-width:0;
+}
+.guide-card-content h3{
+ font-family:var(--serif);
+ font-size:.98rem;
+ font-weight:700;
+ color:var(--ink);
+ letter-spacing:-.02em;
+ margin-bottom:.35rem;
+ line-height:1.3;
+}
+.guide-card-content p{
+ font-size:.82rem;
+ color:var(--ink3);
+ line-height:1.6;
+ margin-bottom:.5rem;
+ display:-webkit-box;
+ -webkit-line-clamp:2;
+ -webkit-box-orient:vertical;
+ overflow:hidden;
+}
+.guide-card-meta{
+ display:flex;
+ align-items:center;
+ gap:.5rem;
+ flex-wrap:wrap;
+}
+.guide-tag{
+ display:inline-flex;
+ padding:.15rem .5rem;
+ background:var(--rust-l);
+ border:1px solid rgba(200,68,26,.15);
+ border-radius:12px;
+ font-size:.65rem;
+ font-family:var(--mono);
+ font-weight:500;
+ color:var(--rust);
+ letter-spacing:.04em;
+}
+.guide-reading{
+ font-size:.68rem;
+ color:var(--ink4);
+ font-family:var(--mono);
+}
+.guide-card-arrow{
+ font-size:1.2rem;
+ color:var(--ink4);
+ flex-shrink:0;
+ transition:all .22s;
+}
+
+@media(max-width:600px){
+ .guides-wrap{padding:0 1rem}
+ .guide-card{flex-direction:column;align-items:flex-start;gap:.75rem;padding:1rem}
+ .guide-card-featured{padding:1.25rem}
+ .guide-card-arrow{display:none}
+ .guide-card-content p{-webkit-line-clamp:3}
+}
+</style>
+
+
+
+
+
+
+
+
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"ItemList",
+ "name":"ResearchToolsLab Guides & Resources",
+ "description":"In-depth guides on creator economics, research methodology, and academic tools.",
+ "url":"https://researchtoolslab.com/#guides",
+ "numberOfItems":3,
+ "itemListElement":[
+  {
+   "@type":"ListItem",
+   "position":1,
+   "item":{
+    "@type":"Article",
+    "name":"YouTube AdSense Revenue Share Percentage for Creators (2025)",
+    "url":"https://researchtoolslab.com/youtube-adsense-revenue-share.html",
+    "description":"Complete breakdown of YouTube's 55/45 AdSense revenue share for creators. Covers all revenue streams, RPM vs CPM, niche data, and optimization strategies.",
+    "datePublished":"2025-01-15",
+    "dateModified":"2025-07-10"
+   }
+  },
+  {
+   "@type":"ListItem",
+   "position":2,
+   "item":{
+    "@type":"Article",
+    "name":"YouTube CPM Rates by Niche (2025 Data)",
+    "url":"https://researchtoolslab.com/youtube-adsense-revenue-share.html#by-niche",
+    "description":"Real RPM and CPM data across 11 YouTube niches after the 55% creator revenue share."
+   }
+  },
+  {
+   "@type":"ListItem",
+   "position":3,
+   "item":{
+    "@type":"Article",
+    "name":"Creator Revenue Share: YouTube vs TikTok vs Instagram vs Twitch",
+    "url":"https://researchtoolslab.com/youtube-adsense-revenue-share.html#comparison",
+    "description":"Side-by-side comparison of creator revenue share percentages across major platforms."
+   }
+  }
+ ]
+}
+</script>
+
+
+
+
+
+
    <h2>How Much Does <em>YouTube Pay</em> Per View in 2026? Complete Guide</h2>
    <p>Understanding how much money you can make on YouTube is one of the most common questions aspiring creators ask. Whether you're planning to start a YouTube channel, already uploading content, or simply curious about <strong>YouTube creator income</strong>, this comprehensive guide breaks down everything you need to know about <strong>YouTube monetization</strong>, AdSense earnings, CPM rates by niche, and how to calculate your potential YouTube revenue accurately.</p>
    <p>Our free <strong>YouTube earnings calculator</strong> above uses real-world CPM benchmarks from 2024–2025 data across dozens of content niches and audience geographies. Unlike basic calculators that use a single flat rate, our <strong>YouTube money calculator</strong> factors in your specific niche, audience region, click-through rate, subscriber count, and multiple revenue streams including AdSense, brand sponsorships, channel memberships, and Super Chat donations.</p>
