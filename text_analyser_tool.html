@@ -6,1561 +6,1634 @@
 <title>Word & Text Analyzer — ResearchToolsLab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-
+<link 
+href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
 /* ================================================================
-   DESIGN TOKENS
+ DESIGN TOKENS
 ================================================================ */
 :root {
-  --cream:   #f5f0e8;
-  --cream2:  #ede7d9;
-  --cream3:  #e4ddd0;
-  --white:   #fff;
-
-  --ink:     #1a1612;
-  --ink2:    #3d3530;
-  --ink3:    #7a6f65;
-  --ink4:    #b0a89e;
-
-  --rust:    #c8441a;
-  --rust2:   #e05228;
-  --rust-l:  rgba(200,68,26,.08);
-
-  --teal:    #1a7a6e;
-  --teal2:   #15685e;
-  --teal-l:  rgba(26,122,110,.08);
-
-  --blue:    #2563eb;
-  --blue-l:  rgba(37,99,235,.08);
-
-  --gold:    #b07d2b;
-  --gold-l:  rgba(176,125,43,.08);
-
-  --border:  rgba(26,22,18,.10);
-  --border2: rgba(26,22,18,.16);
-
-  --shadow-sm: 0 2px 12px rgba(26,22,18,.07);
-  --shadow-md: 0 8px 40px rgba(26,22,18,.12);
-  --shadow-lg: 0 20px 60px rgba(26,22,18,.16);
-
-  --serif: 'Fraunces', Georgia, serif;
-  --sans:  'DM Sans', sans-serif;
-  --mono:  'DM Mono', monospace;
-
-  --r-sm:  8px;
-  --r-md:  14px;
-  --r-lg:  20px;
-  --r-xl:  28px;
+ --cream: #f5f0e8;
+ --cream2: #ede7d9;
+ --cream3: #e4ddd0;
+ --white: #fff;
+ --ink: #1a1612;
+ --ink2: #3d3530;
+ --ink3: #7a6f65;
+ --ink4: #b0a89e;
+ --rust: #c8441a;
+ --rust2: #e05228;
+ --rust-l: rgba(200,68,26,.08);
+ --teal: #1a7a6e;
+ --teal2: #15685e;
+ --teal-l: rgba(26,122,110,.08);
+ --blue: #2563eb;
+ --blue-l: rgba(37,99,235,.08);
+ --gold: #b07d2b;
+ --gold-l: rgba(176,125,43,.08);
+ --border: rgba(26,22,18,.10);
+ --border2: rgba(26,22,18,.16);
+ --shadow-sm: 0 2px 12px rgba(26,22,18,.07);
+ --shadow-md: 0 8px 40px rgba(26,22,18,.12);
+ --shadow-lg: 0 20px 60px rgba(26,22,18,.16);
+ --serif: 'Fraunces', Georgia, serif;
+ --sans: 'DM Sans', sans-serif;
+ --mono: 'DM Mono', monospace;
+ --r-sm: 8px;
+ --r-md: 14px;
+ --r-lg: 20px;
+ --r-xl: 28px;
 }
-
 /* ================================================================
-   RESET & BASE
+ RESET & BASE
 ================================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; font-size: 16px; }
-
 body {
-  font-family: var(--sans);
-  background: var(--cream);
-  color: var(--ink);
-  line-height: 1.6;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
+ font-family: var(--sans);
+ background: var(--cream);
+ color: var(--ink);
+ line-height: 1.6;
+ min-height: 100vh;
+ -webkit-font-smoothing: antialiased;
 }
-
 ::selection { background: var(--rust-l); color: var(--rust); }
-
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--cream2); }
 ::-webkit-scrollbar-thumb { background: var(--cream3); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
-
 /* ================================================================
-   NAVBAR
+ NAVBAR
 ================================================================ */
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
+ position: sticky;
+ top: 0;
+ z-index: 100;
+ background: rgba(255,255,255,.92);
+ backdrop-filter: blur(14px);
+ -webkit-backdrop-filter: blur(14px);
+ border-bottom: 1px solid var(--border);
+ padding: 0 2rem;
 }
-
 .navbar-inner {
-  max-width: 1160px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 62px;
-  gap: 1.5rem;
+ max-width: 1160px;
+ margin: 0 auto;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ height: 62px;
+ gap: 1.5rem;
 }
-
 /* Logo */
 .nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  flex-shrink: 0;
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ text-decoration: none;
+ flex-shrink: 0;
 }
-
 .nav-logo-box {
-  width: 34px;
-  height: 34px;
-  background: var(--rust);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--serif);
-  font-weight: 700;
-  font-size: 1rem;
-  color: #fff;
-  letter-spacing: -.5px;
+ width: 34px;
+ height: 34px;
+ background: var(--rust);
+ border-radius: 8px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-family: var(--serif);
+ font-weight: 700;
+ font-size: 1rem;
+ color: #fff;
+ letter-spacing: -.5px;
 }
-
 .nav-logo-name {
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -.3px;
+ font-family: var(--serif);
+ font-size: 1.05rem;
+ font-weight: 600;
+ color: var(--ink);
+ letter-spacing: -.3px;
 }
-
 /* Nav links */
 .nav-links {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  list-style: none;
+ display: flex;
+ align-items: center;
+ gap: 0.25rem;
+ list-style: none;
 }
-
 .nav-links a {
-  font-family: var(--sans);
-  font-size: .86rem;
-  font-weight: 500;
-  color: var(--ink3);
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: var(--r-sm);
-  transition: color .18s, background .18s;
+ font-family: var(--sans);
+ font-size: .86rem;
+ font-weight: 500;
+ color: var(--ink3);
+ text-decoration: none;
+ padding: 6px 12px;
+ border-radius: var(--r-sm);
+ transition: color .18s, background .18s;
 }
-
 .nav-links a:hover,
 .nav-links a.active {
-  color: var(--ink);
-  background: var(--cream);
+ color: var(--ink);
+ background: var(--cream);
 }
-
 .nav-links a.active { color: var(--rust); font-weight: 600; }
-
 .nav-cta {
-  flex-shrink: 0;
+ flex-shrink: 0;
 }
-
 /* Hamburger */
 .nav-hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: var(--r-sm);
+ display: none;
+ flex-direction: column;
+ gap: 5px;
+ background: none;
+ border: none;
+ cursor: pointer;
+ padding: 6px;
+ border-radius: var(--r-sm);
 }
 .nav-hamburger span {
-  display: block;
-  width: 22px;
-  height: 2px;
-  background: var(--ink2);
-  border-radius: 99px;
-  transition: all .2s;
+ display: block;
+ width: 22px;
+ height: 2px;
+ background: var(--ink2);
+ border-radius: 99px;
+ transition: all .2s;
 }
-
 /* ================================================================
-   BUTTONS
+ BUTTONS
 ================================================================ */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--sans);
-  font-size: .875rem;
-  font-weight: 600;
-  border-radius: var(--r-sm);
-  border: 1.5px solid transparent;
-  cursor: pointer;
-  padding: 9px 20px;
-  text-decoration: none;
-  transition: transform .18s, box-shadow .18s, background .18s, color .18s, border-color .18s;
-  line-height: 1;
-  white-space: nowrap;
+ display: inline-flex;
+ align-items: center;
+ gap: 7px;
+ font-family: var(--sans);
+ font-size: .875rem;
+ font-weight: 600;
+ border-radius: var(--r-sm);
+ border: 1.5px solid transparent;
+ cursor: pointer;
+ padding: 9px 20px;
+ text-decoration: none;
+ transition: transform .18s, box-shadow .18s, background .18s, color .18s, border-color .18s;
+ line-height: 1;
+ white-space: nowrap;
 }
 .btn:focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
-
 /* Primary — rust */
 .btn-gen {
-  background: var(--rust);
-  color: #fff;
-  border-color: var(--rust);
+ background: var(--rust);
+ color: #fff;
+ border-color: var(--rust);
 }
 .btn-gen:hover {
-  background: var(--rust2);
-  border-color: var(--rust2);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(200,68,26,.28);
+ background: var(--rust2);
+ border-color: var(--rust2);
+ transform: translateY(-2px);
+ box-shadow: 0 6px 20px rgba(200,68,26,.28);
 }
 .btn-gen:active { transform: translateY(0); box-shadow: none; }
-
 /* Secondary */
 .btn-sec {
-  background: var(--white);
-  color: var(--ink2);
-  border-color: var(--border2);
+ background: var(--white);
+ color: var(--ink2);
+ border-color: var(--border2);
 }
 .btn-sec:hover {
-  background: var(--cream);
-  border-color: rgba(26,22,18,.28);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+ background: var(--cream);
+ border-color: rgba(26,22,18,.28);
+ transform: translateY(-1px);
+ box-shadow: var(--shadow-sm);
 }
-
 /* Ghost / small */
 .btn-ghost {
-  background: transparent;
-  color: var(--ink3);
-  border-color: var(--border);
-  padding: 7px 14px;
-  font-size: .82rem;
+ background: transparent;
+ color: var(--ink3);
+ border-color: var(--border);
+ padding: 7px 14px;
+ font-size: .82rem;
 }
 .btn-ghost:hover { background: var(--cream); color: var(--ink); border-color: var(--border2); }
-
 /* Teal */
 .btn-teal {
-  background: var(--teal);
-  color: #fff;
-  border-color: var(--teal);
+ background: var(--teal);
+ color: #fff;
+ border-color: var(--teal);
 }
 .btn-teal:hover {
-  background: var(--teal2);
-  border-color: var(--teal2);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(26,122,110,.25);
+ background: var(--teal2);
+ border-color: var(--teal2);
+ transform: translateY(-2px);
+ box-shadow: 0 6px 20px rgba(26,122,110,.25);
 }
-
 /* Icon-only small */
 .btn-icon {
-  padding: 8px 10px;
-  gap: 0;
+ padding: 8px 10px;
+ gap: 0;
 }
-
 /* ================================================================
-   PAGE HEADER
+ PAGE HEADER
 ================================================================ */
 .page-header {
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-  padding: 3.5rem 2rem 3rem;
-  text-align: center;
+ background: var(--white);
+ border-bottom: 1px solid var(--border);
+ padding: 3.5rem 2rem 3rem;
+ text-align: center;
 }
-
 .page-header-inner {
-  max-width: 720px;
-  margin: 0 auto;
+ max-width: 720px;
+ margin: 0 auto;
 }
-
 /* Breadcrumb */
 .breadcrumb {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-family: var(--mono);
-  font-size: .72rem;
-  font-weight: 500;
-  color: var(--ink4);
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  margin-bottom: 1.25rem;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 6px;
+ font-family: var(--mono);
+ font-size: .72rem;
+ font-weight: 500;
+ color: var(--ink4);
+ text-transform: uppercase;
+ letter-spacing: 1.2px;
+ margin-bottom: 1.25rem;
 }
 .breadcrumb a { color: inherit; text-decoration: none; }
 .breadcrumb a:hover { color: var(--rust); }
 .breadcrumb .sep { color: var(--border2); }
-
 /* H1 */
 .page-header h1 {
-  font-family: var(--serif);
-  font-size: clamp(2rem, 5vw, 2.85rem);
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.18;
-  letter-spacing: -.5px;
-  margin-bottom: .85rem;
+ font-family: var(--serif);
+ font-size: clamp(2rem, 5vw, 2.85rem);
+ font-weight: 600;
+ color: var(--ink);
+ line-height: 1.18;
+ letter-spacing: -.5px;
+ margin-bottom: .85rem;
 }
-
 .page-header h1 em {
-  font-style: italic;
-  color: var(--rust);
+ font-style: italic;
+ color: var(--rust);
 }
-
 .page-header .subtitle {
-  font-size: 1.05rem;
-  color: var(--ink3);
-  max-width: 560px;
-  margin: 0 auto 1.5rem;
-  line-height: 1.65;
+ font-size: 1.05rem;
+ color: var(--ink3);
+ max-width: 560px;
+ margin: 0 auto 1.5rem;
+ line-height: 1.65;
 }
-
 /* Badge pills row */
 .badge-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+ display: flex;
+ flex-wrap: wrap;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
 }
-
 .badge-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--mono);
-  font-size: .72rem;
-  font-weight: 500;
-  padding: 5px 12px;
-  border-radius: 99px;
-  letter-spacing: .3px;
+ display: inline-flex;
+ align-items: center;
+ gap: 5px;
+ font-family: var(--mono);
+ font-size: .72rem;
+ font-weight: 500;
+ padding: 5px 12px;
+ border-radius: 99px;
+ letter-spacing: .3px;
 }
-
-.badge-teal  { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(26,122,110,.18); }
-.badge-rust  { background: var(--rust-l); color: var(--rust); border: 1px solid rgba(200,68,26,.18); }
-.badge-blue  { background: var(--blue-l); color: var(--blue); border: 1px solid rgba(37,99,235,.18); }
-.badge-gold  { background: var(--gold-l); color: var(--gold); border: 1px solid rgba(176,125,43,.18); }
-.badge-ink   { background: rgba(26,22,18,.05); color: var(--ink3); border: 1px solid var(--border); }
-
+.badge-teal { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(26,122,110,.18); }
+.badge-rust { background: var(--rust-l); color: var(--rust); border: 1px solid rgba(200,68,26,.18); }
+.badge-blue { background: var(--blue-l); color: var(--blue); border: 1px solid rgba(37,99,235,.18); }
+.badge-gold { background: var(--gold-l); color: var(--gold); border: 1px solid rgba(176,125,43,.18); }
+.badge-ink { background: rgba(26,22,18,.05); color: var(--ink3); border: 1px solid var(--border); }
 /* ================================================================
-   MAIN LAYOUT
+ MAIN LAYOUT
 ================================================================ */
 .main-wrap {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 2.5rem 2rem 4rem;
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 1.75rem;
-  align-items: start;
+ max-width: 1160px;
+ margin: 0 auto;
+ padding: 2.5rem 2rem 4rem;
+ display: grid;
+ grid-template-columns: 1fr 340px;
+ gap: 1.75rem;
+ align-items: start;
 }
-
 /* ================================================================
-   TOOL CARD
+ TOOL CARD
 ================================================================ */
 .tool-card {
-  background: var(--white);
-  border-radius: var(--r-xl);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  position: relative;
+ background: var(--white);
+ border-radius: var(--r-xl);
+ border: 1px solid var(--border);
+ box-shadow: var(--shadow-md);
+ overflow: hidden;
+ position: relative;
 }
-
 /* Gradient top border */
 .tool-card::before {
-  content: '';
-  display: block;
-  height: 4px;
-  background: linear-gradient(90deg, var(--rust) 0%, #e8854a 40%, var(--teal) 100%);
+ content: '';
+ display: block;
+ height: 4px;
+ background: linear-gradient(90deg, var(--rust) 0%, #e8854a 40%, var(--teal) 100%);
 }
-
 .tool-inner {
-  padding: 2rem;
+ padding: 2rem;
 }
-
 /* ================================================================
-   INPUT SECTION
+ INPUT SECTION
 ================================================================ */
 .input-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: .6rem;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 1rem;
+ margin-bottom: .6rem;
 }
-
 .input-label-text {
-  font-family: var(--mono);
-  font-size: .7rem;
-  font-weight: 500;
-  color: var(--ink4);
-  text-transform: uppercase;
-  letter-spacing: 1.1px;
+ font-family: var(--mono);
+ font-size: .7rem;
+ font-weight: 500;
+ color: var(--ink4);
+ text-transform: uppercase;
+ letter-spacing: 1.1px;
 }
-
 .input-actions {
-  display: flex;
-  gap: 6px;
+ display: flex;
+ gap: 6px;
 }
-
 .textarea-wrap {
-  position: relative;
+ position: relative;
 }
-
 #text-input {
-  width: 100%;
-  min-height: 240px;
-  max-height: 520px;
-  resize: vertical;
-  font-family: var(--sans);
-  font-size: .95rem;
-  line-height: 1.7;
-  color: var(--ink);
-  background: var(--cream);
-  border: 1.5px solid var(--border2);
-  border-radius: var(--r-md);
-  padding: 1.1rem 1.25rem;
-  outline: none;
-  transition: border-color .18s, box-shadow .18s;
-  caret-color: var(--rust);
-  display: block;
+ width: 100%;
+ min-height: 240px;
+ max-height: 520px;
+ resize: vertical;
+ font-family: var(--sans);
+ font-size: .95rem;
+ line-height: 1.7;
+ color: var(--ink);
+ background: var(--cream);
+ border: 1.5px solid var(--border2);
+ border-radius: var(--r-md);
+ padding: 1.1rem 1.25rem;
+ outline: none;
+ transition: border-color .18s, box-shadow .18s;
+ caret-color: var(--rust);
+ display: block;
 }
-
 #text-input::placeholder {
-  color: var(--ink4);
-  font-style: italic;
+ color: var(--ink4);
+ font-style: italic;
 }
-
 #text-input:focus {
-  border-color: var(--rust);
-  box-shadow: 0 0 0 4px var(--rust-l), var(--shadow-sm);
-  background: var(--white);
+ border-color: var(--rust);
+ box-shadow: 0 0 0 4px var(--rust-l), var(--shadow-sm);
+ background: var(--white);
 }
-
 /* Char counter inside textarea wrapper */
 .char-counter {
-  position: absolute;
-  bottom: 10px;
-  right: 14px;
-  font-family: var(--mono);
-  font-size: .68rem;
-  color: var(--ink4);
-  pointer-events: none;
-  background: var(--cream);
-  padding: 2px 6px;
-  border-radius: 4px;
+ position: absolute;
+ bottom: 10px;
+ right: 14px;
+ font-family: var(--mono);
+ font-size: .68rem;
+ color: var(--ink4);
+ pointer-events: none;
+ background: var(--cream);
+ padding: 2px 6px;
+ border-radius: 4px;
 }
-
 /* ================================================================
-   TOGGLE OPTIONS
+ TOGGLE OPTIONS
 ================================================================ */
 .options-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
+ display: flex;
+ flex-wrap: wrap;
+ gap: 8px;
+ margin-top: 1rem;
+ padding-top: 1rem;
+ border-top: 1px solid var(--border);
 }
-
 .toggle-wrap {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  cursor: pointer;
-  user-select: none;
+ display: flex;
+ align-items: center;
+ gap: 7px;
+ cursor: pointer;
+ user-select: none;
 }
-
 .toggle-wrap input[type="checkbox"] {
-  display: none;
+ display: none;
 }
-
 .toggle-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--mono);
-  font-size: .72rem;
-  font-weight: 500;
-  color: var(--ink3);
-  padding: 5px 11px 5px 8px;
-  border-radius: 99px;
-  border: 1.5px solid var(--border2);
-  background: var(--cream);
-  transition: all .18s;
-  letter-spacing: .2px;
+ display: inline-flex;
+ align-items: center;
+ gap: 6px;
+ font-family: var(--mono);
+ font-size: .72rem;
+ font-weight: 500;
+ color: var(--ink3);
+ padding: 5px 11px 5px 8px;
+ border-radius: 99px;
+ border: 1.5px solid var(--border2);
+ background: var(--cream);
+ transition: all .18s;
+ letter-spacing: .2px;
 }
-
 .toggle-chip .dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border2);
-  background: var(--white);
-  transition: all .18s;
-  flex-shrink: 0;
+ width: 12px;
+ height: 12px;
+ border-radius: 50%;
+ border: 1.5px solid var(--border2);
+ background: var(--white);
+ transition: all .18s;
+ flex-shrink: 0;
 }
-
 .toggle-wrap input:checked + .toggle-chip {
-  background: var(--teal-l);
-  border-color: rgba(26,122,110,.28);
-  color: var(--teal);
+ background: var(--teal-l);
+ border-color: rgba(26,122,110,.28);
+ color: var(--teal);
 }
-
 .toggle-wrap input:checked + .toggle-chip .dot {
-  background: var(--teal);
-  border-color: var(--teal);
+ background: var(--teal);
+ border-color: var(--teal);
 }
-
 /* ================================================================
-   DIVIDER
+ DIVIDER
 ================================================================ */
 .section-divider {
-  height: 1px;
-  background: var(--border);
-  margin: 1.75rem 0;
+ height: 1px;
+ background: var(--border);
+ margin: 1.75rem 0;
 }
-
 /* ================================================================
-   QUICK STATS GRID (primary 6-box grid)
+ QUICK STATS GRID (primary 6-box grid)
 ================================================================ */
 .quick-stats-heading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 1rem;
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ margin-bottom: 1rem;
 }
-
 .section-label {
-  font-family: var(--mono);
-  font-size: .7rem;
-  font-weight: 500;
-  color: var(--ink4);
-  text-transform: uppercase;
-  letter-spacing: 1.1px;
+ font-family: var(--mono);
+ font-size: .7rem;
+ font-weight: 500;
+ color: var(--ink4);
+ text-transform: uppercase;
+ letter-spacing: 1.1px;
 }
-
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+ display: grid;
+ grid-template-columns: repeat(3, 1fr);
+ gap: 10px;
 }
-
 /* Individual stat box */
 .stat-box {
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 1rem 1.1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  transition: transform .15s, box-shadow .15s;
-  cursor: default;
+ background: var(--cream);
+ border: 1px solid var(--border);
+ border-radius: var(--r-md);
+ padding: 1rem 1.1rem;
+ display: flex;
+ flex-direction: column;
+ gap: 3px;
+ transition: transform .15s, box-shadow .15s;
+ cursor: default;
 }
-
 .stat-box:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+ transform: translateY(-2px);
+ box-shadow: var(--shadow-sm);
 }
-
 .stat-box .s-label {
-  font-family: var(--mono);
-  font-size: .66rem;
-  font-weight: 500;
-  color: var(--ink4);
-  text-transform: uppercase;
-  letter-spacing: .9px;
-  line-height: 1;
+ font-family: var(--mono);
+ font-size: .66rem;
+ font-weight: 500;
+ color: var(--ink4);
+ text-transform: uppercase;
+ letter-spacing: .9px;
+ line-height: 1;
 }
-
 .stat-box .s-value {
-  font-family: var(--serif);
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.1;
-  letter-spacing: -.5px;
-  transition: color .25s;
+ font-family: var(--serif);
+ font-size: 1.8rem;
+ font-weight: 600;
+ color: var(--ink);
+ line-height: 1.1;
+ letter-spacing: -.5px;
+ transition: color .25s;
 }
-
 .stat-box .s-value.updated {
-  color: var(--rust);
+ color: var(--rust);
 }
-
 .stat-box .s-sub {
-  font-size: .73rem;
-  color: var(--ink4);
-  font-family: var(--mono);
-  margin-top: 1px;
+ font-size: .73rem;
+ color: var(--ink4);
+ font-family: var(--mono);
+ margin-top: 1px;
 }
-
 /* Accent top-border variants */
-.stat-box.accent-rust  { border-top: 2.5px solid var(--rust); }
-.stat-box.accent-teal  { border-top: 2.5px solid var(--teal); }
-.stat-box.accent-blue  { border-top: 2.5px solid var(--blue); }
-.stat-box.accent-gold  { border-top: 2.5px solid var(--gold); }
-.stat-box.accent-ink   { border-top: 2.5px solid var(--ink3); }
-
+.stat-box.accent-rust { border-top: 2.5px solid var(--rust); }
+.stat-box.accent-teal { border-top: 2.5px solid var(--teal); }
+.stat-box.accent-blue { border-top: 2.5px solid var(--blue); }
+.stat-box.accent-gold { border-top: 2.5px solid var(--gold); }
+.stat-box.accent-ink { border-top: 2.5px solid var(--ink3); }
 /* ================================================================
-   HIGHLIGHT PANEL (reading / speaking time)
+ HIGHLIGHT PANEL (reading / speaking time)
 ================================================================ */
 .highlight-panel {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 1rem;
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 10px;
+ margin-top: 1rem;
 }
-
 .time-card {
-  border-radius: var(--r-md);
-  padding: 1.1rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+ border-radius: var(--r-md);
+ padding: 1.1rem 1.25rem;
+ display: flex;
+ flex-direction: column;
+ gap: 4px;
 }
-
 .time-card.reading-card {
-  background: var(--blue-l);
-  border: 1px solid rgba(37,99,235,.15);
-  border-left: 3px solid var(--blue);
+ background: var(--blue-l);
+ border: 1px solid rgba(37,99,235,.15);
+ border-left: 3px solid var(--blue);
 }
-
 .time-card.speaking-card {
-  background: var(--gold-l);
-  border: 1px solid rgba(176,125,43,.15);
-  border-left: 3px solid var(--gold);
+ background: var(--gold-l);
+ border: 1px solid rgba(176,125,43,.15);
+ border-left: 3px solid var(--gold);
 }
-
 .time-card .tc-icon {
-  font-size: 1.25rem;
-  margin-bottom: 2px;
+ font-size: 1.25rem;
+ margin-bottom: 2px;
 }
-
 .time-card .tc-label {
-  font-family: var(--mono);
-  font-size: .66rem;
-  font-weight: 500;
-  color: var(--ink4);
-  text-transform: uppercase;
-  letter-spacing: .9px;
+ font-family: var(--mono);
+ font-size: .66rem;
+ font-weight: 500;
+ color: var(--ink4);
+ text-transform: uppercase;
+ letter-spacing: .9px;
 }
-
 .time-card .tc-value {
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -.3px;
-  line-height: 1.2;
+ font-family: var(--serif);
+ font-size: 1.5rem;
+ font-weight: 600;
+ color: var(--ink);
+ letter-spacing: -.3px;
+ line-height: 1.2;
 }
-
-.time-card.reading-card .tc-value  { color: var(--blue); }
+.time-card.reading-card .tc-value { color: var(--blue); }
 .time-card.speaking-card .tc-value { color: var(--gold); }
-
 .time-card .tc-sub {
-  font-size: .72rem;
-  color: var(--ink3);
-  margin-top: 1px;
+ font-size: .72rem;
+ color: var(--ink3);
+ margin-top: 1px;
 }
-
 /* ================================================================
-   RIGHT SIDEBAR
+ RIGHT SIDEBAR
 ================================================================ */
 .sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+ display: flex;
+ flex-direction: column;
+ gap: 1.25rem;
 }
-
 /* ================================================================
-   SIDEBAR CARDS (keyword density, word details, freq list)
+ SIDEBAR CARDS (keyword density, word details, freq list)
 ================================================================ */
 .side-card {
-  background: var(--white);
-  border-radius: var(--r-lg);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
+ background: var(--white);
+ border-radius: var(--r-lg);
+ border: 1px solid var(--border);
+ box-shadow: var(--shadow-sm);
+ overflow: hidden;
 }
-
 .side-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: .9rem 1.25rem .8rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--cream);
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding: .9rem 1.25rem .8rem;
+ border-bottom: 1px solid var(--border);
+ background: var(--cream);
 }
-
 .side-card-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--serif);
-  font-size: .95rem;
-  font-weight: 600;
-  color: var(--ink);
-  letter-spacing: -.2px;
+ display: flex;
+ align-items: center;
+ gap: 8px;
+ font-family: var(--serif);
+ font-size: .95rem;
+ font-weight: 600;
+ color: var(--ink);
+ letter-spacing: -.2px;
 }
-
 .side-card-title .icon {
-  font-size: 1rem;
-  line-height: 1;
+ font-size: 1rem;
+ line-height: 1;
 }
-
 .side-card-body {
-  padding: 1.1rem 1.25rem;
+ padding: 1.1rem 1.25rem;
 }
-
 /* ================================================================
-   KEYWORD DENSITY
+ KEYWORD DENSITY
 ================================================================ */
 .keyword-list {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+ display: flex;
+ flex-direction: column;
+ gap: 9px;
 }
-
 .keyword-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+ display: flex;
+ flex-direction: column;
+ gap: 3px;
 }
-
 .keyword-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ gap: 8px;
 }
-
 .keyword-word {
-  font-family: var(--mono);
-  font-size: .78rem;
-  font-weight: 500;
-  color: var(--ink2);
-  letter-spacing: -.2px;
+ font-family: var(--mono);
+ font-size: .78rem;
+ font-weight: 500;
+ color: var(--ink2);
+ letter-spacing: -.2px;
 }
-
 .keyword-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+ display: flex;
+ align-items: center;
+ gap: 8px;
 }
-
 .keyword-count {
-  font-family: var(--mono);
-  font-size: .68rem;
-  color: var(--ink4);
+ font-family: var(--mono);
+ font-size: .68rem;
+ color: var(--ink4);
 }
-
 .keyword-pct {
-  font-family: var(--mono);
-  font-size: .68rem;
-  font-weight: 500;
-  color: var(--teal);
+ font-family: var(--mono);
+ font-size: .68rem;
+ font-weight: 500;
+ color: var(--teal);
 }
-
 .kw-bar {
-  height: 5px;
-  background: var(--cream2);
-  border-radius: 99px;
-  overflow: hidden;
+ height: 5px;
+ background: var(--cream2);
+ border-radius: 99px;
+ overflow: hidden;
 }
-
 .kw-bar-fill {
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, var(--teal), #4ab8aa);
-  transition: width .4s cubic-bezier(.4,0,.2,1);
+ height: 100%;
+ border-radius: 99px;
+ background: linear-gradient(90deg, var(--teal), #4ab8aa);
+ transition: width .4s cubic-bezier(.4,0,.2,1);
 }
-
 .kw-empty {
-  font-family: var(--mono);
-  font-size: .78rem;
-  color: var(--ink4);
-  text-align: center;
-  padding: 1.5rem 0;
-  font-style: italic;
+ font-family: var(--mono);
+ font-size: .78rem;
+ color: var(--ink4);
+ text-align: center;
+ padding: 1.5rem 0;
+ font-style: italic;
 }
-
 /* ================================================================
-   WORD DETAILS (longest, shortest, avg length, unique)
+ WORD DETAILS (longest, shortest, avg length, unique)
 ================================================================ */
 .detail-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+ display: flex;
+ flex-direction: column;
+ gap: 0;
 }
-
 .detail-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: .7rem 0;
-  border-bottom: 1px solid var(--border);
-  gap: 10px;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding: .7rem 0;
+ border-bottom: 1px solid var(--border);
+ gap: 10px;
 }
-
 .detail-row:last-child { border-bottom: none; }
-
 .detail-label {
-  font-family: var(--mono);
-  font-size: .72rem;
-  font-weight: 500;
-  color: var(--ink4);
-  text-transform: uppercase;
-  letter-spacing: .7px;
-  flex-shrink: 0;
+ font-family: var(--mono);
+ font-size: .72rem;
+ font-weight: 500;
+ color: var(--ink4);
+ text-transform: uppercase;
+ letter-spacing: .7px;
+ flex-shrink: 0;
 }
-
 .detail-value {
-  font-family: var(--serif);
-  font-size: .92rem;
-  font-weight: 600;
-  color: var(--ink2);
-  text-align: right;
-  word-break: break-all;
-  letter-spacing: -.2px;
+ font-family: var(--serif);
+ font-size: .92rem;
+ font-weight: 600;
+ color: var(--ink2);
+ text-align: right;
+ word-break: break-all;
+ letter-spacing: -.2px;
 }
-
 .detail-value em {
-  font-style: italic;
-  color: var(--rust);
+ font-style: italic;
+ color: var(--rust);
 }
-
 /* ================================================================
-   FREQUENT WORDS LIST
+ FREQUENT WORDS LIST
 ================================================================ */
 .freq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+ display: flex;
+ flex-direction: column;
+ gap: 0;
 }
-
 .freq-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: .55rem 0;
-  border-bottom: 1px solid var(--border);
+ display: flex;
+ align-items: center;
+ gap: 10px;
+ padding: .55rem 0;
+ border-bottom: 1px solid var(--border);
 }
-
 .freq-item:last-child { border-bottom: none; }
-
 .freq-rank {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--cream2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  font-size: .62rem;
-  font-weight: 500;
-  color: var(--ink4);
-  flex-shrink: 0;
+ width: 20px;
+ height: 20px;
+ border-radius: 50%;
+ background: var(--cream2);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-family: var(--mono);
+ font-size: .62rem;
+ font-weight: 500;
+ color: var(--ink4);
+ flex-shrink: 0;
 }
-
 .freq-rank.top1 { background: var(--rust-l); color: var(--rust); }
 .freq-rank.top2 { background: var(--teal-l); color: var(--teal); }
 .freq-rank.top3 { background: var(--blue-l); color: var(--blue); }
-
 .freq-word {
-  flex: 1;
-  font-family: var(--mono);
-  font-size: .78rem;
-  font-weight: 500;
-  color: var(--ink2);
+ flex: 1;
+ font-family: var(--mono);
+ font-size: .78rem;
+ font-weight: 500;
+ color: var(--ink2);
 }
-
 .freq-bar-wrap {
-  flex: 1;
-  height: 4px;
-  background: var(--cream2);
-  border-radius: 99px;
-  overflow: hidden;
+ flex: 1;
+ height: 4px;
+ background: var(--cream2);
+ border-radius: 99px;
+ overflow: hidden;
 }
-
 .freq-bar-fill {
-  height: 100%;
-  border-radius: 99px;
-  background: var(--rust);
-  opacity: .55;
-  transition: width .4s cubic-bezier(.4,0,.2,1);
+ height: 100%;
+ border-radius: 99px;
+ background: var(--rust);
+ opacity: .55;
+ transition: width .4s cubic-bezier(.4,0,.2,1);
 }
-
 .freq-count {
-  font-family: var(--mono);
-  font-size: .68rem;
-  color: var(--ink4);
-  flex-shrink: 0;
-  width: 24px;
-  text-align: right;
+ font-family: var(--mono);
+ font-size: .68rem;
+ color: var(--ink4);
+ flex-shrink: 0;
+ width: 24px;
+ text-align: right;
 }
-
 /* ================================================================
-   CHAR FREQUENCY SECTION (toggle)
+ CHAR FREQUENCY SECTION (toggle)
 ================================================================ */
 .char-freq-section {
-  margin-top: .75rem;
-  display: none;
+ margin-top: .75rem;
+ display: none;
 }
-
 .char-freq-section.visible { display: block; }
-
 .char-freq-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-  margin-top: .75rem;
+ display: grid;
+ grid-template-columns: repeat(6, 1fr);
+ gap: 5px;
+ margin-top: .75rem;
 }
-
 .char-freq-cell {
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 5px 4px;
-  text-align: center;
+ background: var(--cream);
+ border: 1px solid var(--border);
+ border-radius: var(--r-sm);
+ padding: 5px 4px;
+ text-align: center;
 }
-
 .cfc-char {
-  font-family: var(--mono);
-  font-size: .7rem;
-  font-weight: 500;
-  color: var(--ink2);
+ font-family: var(--mono);
+ font-size: .7rem;
+ font-weight: 500;
+ color: var(--ink2);
 }
-
 .cfc-count {
-  font-family: var(--mono);
-  font-size: .6rem;
-  color: var(--ink4);
+ font-family: var(--mono);
+ font-size: .6rem;
+ color: var(--ink4);
 }
-
 .cfc-bar {
-  height: 3px;
-  background: var(--cream3);
-  border-radius: 99px;
-  overflow: hidden;
-  margin-top: 3px;
+ height: 3px;
+ background: var(--cream3);
+ border-radius: 99px;
+ overflow: hidden;
+ margin-top: 3px;
 }
-
 .cfc-bar-fill {
-  height: 100%;
-  border-radius: 99px;
-  background: var(--rust);
-  opacity: .6;
+ height: 100%;
+ border-radius: 99px;
+ background: var(--rust);
+ opacity: .6;
 }
-
 /* ================================================================
-   TEAL HIGHLIGHT BOX
+ TEAL HIGHLIGHT BOX
 ================================================================ */
 .teal-box {
-  background: var(--teal-l);
-  border: 1px solid rgba(26,122,110,.15);
-  border-left: 3px solid var(--teal);
-  border-radius: var(--r-md);
-  padding: 1rem 1.1rem;
-  margin-top: 1rem;
+ background: var(--teal-l);
+ border: 1px solid rgba(26,122,110,.15);
+ border-left: 3px solid var(--teal);
+ border-radius: var(--r-md);
+ padding: 1rem 1.1rem;
+ margin-top: 1rem;
 }
-
 .teal-box .tb-label {
-  font-family: var(--mono);
-  font-size: .66rem;
-  font-weight: 500;
-  color: var(--teal2);
-  text-transform: uppercase;
-  letter-spacing: .9px;
-  margin-bottom: .35rem;
+ font-family: var(--mono);
+ font-size: .66rem;
+ font-weight: 500;
+ color: var(--teal2);
+ text-transform: uppercase;
+ letter-spacing: .9px;
+ margin-bottom: .35rem;
 }
-
 .teal-box .tb-text {
-  font-size: .85rem;
-  color: var(--ink2);
-  line-height: 1.55;
+ font-size: .85rem;
+ color: var(--ink2);
+ line-height: 1.55;
 }
-
 /* ================================================================
-   PROGRESS BAR (vocabulary richness)
+ PROGRESS BAR (vocabulary richness)
 ================================================================ */
 .richness-bar-wrap {
-  margin-top: .5rem;
+ margin-top: .5rem;
 }
-
 .richness-bar-track {
-  height: 8px;
-  background: var(--cream2);
-  border-radius: 99px;
-  overflow: hidden;
-  margin: .4rem 0;
+ height: 8px;
+ background: var(--cream2);
+ border-radius: 99px;
+ overflow: hidden;
+ margin: .4rem 0;
 }
-
 .richness-bar-fill {
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, var(--rust), var(--teal));
-  transition: width .5s cubic-bezier(.4,0,.2,1);
+ height: 100%;
+ border-radius: 99px;
+ background: linear-gradient(90deg, var(--rust), var(--teal));
+ transition: width .5s cubic-bezier(.4,0,.2,1);
 }
-
 .richness-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--mono);
-  font-size: .62rem;
-  color: var(--ink4);
+ display: flex;
+ justify-content: space-between;
+ font-family: var(--mono);
+ font-size: .62rem;
+ color: var(--ink4);
 }
-
 /* ================================================================
-   SCORE PILL
+ SCORE PILL
 ================================================================ */
 .score-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 99px;
-  font-family: var(--mono);
-  font-size: .7rem;
-  font-weight: 500;
+ display: inline-flex;
+ align-items: center;
+ gap: 4px;
+ padding: 3px 10px;
+ border-radius: 99px;
+ font-family: var(--mono);
+ font-size: .7rem;
+ font-weight: 500;
 }
-
-.pill-good   { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(26,122,110,.2); }
-.pill-avg    { background: var(--blue-l); color: var(--blue); border: 1px solid rgba(37,99,235,.2); }
-.pill-low    { background: var(--rust-l); color: var(--rust); border: 1px solid rgba(200,68,26,.2); }
-.pill-empty  { background: rgba(26,22,18,.05); color: var(--ink4); border: 1px solid var(--border); }
-
+.pill-good { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(26,122,110,.2); }
+.pill-avg { background: var(--blue-l); color: var(--blue); border: 1px solid rgba(37,99,235,.2); }
+.pill-low { background: var(--rust-l); color: var(--rust); border: 1px solid rgba(200,68,26,.2); }
+.pill-empty { background: rgba(26,22,18,.05); color: var(--ink4); border: 1px solid var(--border); }
 /* ================================================================
-   TOAST
+ TOAST
 ================================================================ */
 #toast-container {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 999;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  pointer-events: none;
+ position: fixed;
+ bottom: 28px;
+ right: 28px;
+ z-index: 999;
+ display: flex;
+ flex-direction: column;
+ gap: 8px;
+ pointer-events: none;
 }
-
 .toast {
-  background: var(--ink);
-  color: var(--cream);
-  font-family: var(--sans);
-  font-size: .82rem;
-  font-weight: 500;
-  padding: 10px 18px;
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-md);
-  transform: translateX(80px);
-  opacity: 0;
-  transition: all .28s cubic-bezier(.4,0,.2,1);
-  pointer-events: auto;
-  max-width: 260px;
+ background: var(--ink);
+ color: var(--cream);
+ font-family: var(--sans);
+ font-size: .82rem;
+ font-weight: 500;
+ padding: 10px 18px;
+ border-radius: var(--r-sm);
+ box-shadow: var(--shadow-md);
+ transform: translateX(80px);
+ opacity: 0;
+ transition: all .28s cubic-bezier(.4,0,.2,1);
+ pointer-events: auto;
+ max-width: 260px;
 }
-
 .toast.show {
-  transform: translateX(0);
-  opacity: 1;
+ transform: translateX(0);
+ opacity: 1;
 }
-
 /* ================================================================
-   FOOTER
+ FOOTER
 ================================================================ */
 footer {
-  background: var(--cream2);
-  border-top: 1px solid var(--border);
-  padding: 2.5rem 2rem;
-  text-align: center;
+ background: var(--cream2);
+ border-top: 1px solid var(--border);
+ padding: 2.5rem 2rem;
+ text-align: center;
 }
-
 .footer-inner {
-  max-width: 760px;
-  margin: 0 auto;
+ max-width: 760px;
+ margin: 0 auto;
 }
-
 .footer-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  margin-bottom: .9rem;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 9px;
+ margin-bottom: .9rem;
 }
-
 .footer-logo-box {
-  width: 28px; height: 28px;
-  background: var(--rust);
-  border-radius: 7px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--serif);
-  font-size: .85rem;
-  font-weight: 700;
-  color: #fff;
+ width: 28px; height: 28px;
+ background: var(--rust);
+ border-radius: 7px;
+ display: flex; align-items: center; justify-content: center;
+ font-family: var(--serif);
+ font-size: .85rem;
+ font-weight: 700;
+ color: #fff;
 }
-
 .footer-logo-name {
-  font-family: var(--serif);
-  font-size: .95rem;
-  font-weight: 600;
-  color: var(--ink2);
+ font-family: var(--serif);
+ font-size: .95rem;
+ font-weight: 600;
+ color: var(--ink2);
 }
-
 .footer-links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .2rem .75rem;
-  margin-bottom: .85rem;
-  list-style: none;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ flex-wrap: wrap;
+ gap: .2rem .75rem;
+ margin-bottom: .85rem;
+ list-style: none;
 }
-
 .footer-links a {
-  font-size: .78rem;
-  color: var(--ink4);
-  text-decoration: none;
-  transition: color .18s;
+ font-size: .78rem;
+ color: var(--ink4);
+ text-decoration: none;
+ transition: color .18s;
 }
-
 .footer-links a:hover { color: var(--rust); }
-
 .footer-copy {
-  font-size: .75rem;
-  color: var(--ink4);
-  font-family: var(--mono);
+ font-size: .75rem;
+ color: var(--ink4);
+ font-family: var(--mono);
 }
-
 /* ================================================================
-   UTILITY
+ UTILITY
 ================================================================ */
 .sr-only {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+ position: absolute; width: 1px; height: 1px;
+ padding: 0; margin: -1px; overflow: hidden;
+ clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
 }
-
 /* ================================================================
-   RESPONSIVE
+ RESPONSIVE
 ================================================================ */
 @media (max-width: 960px) {
-  .main-wrap {
-    grid-template-columns: 1fr;
-  }
-  .sidebar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
+ .main-wrap {
+ grid-template-columns: 1fr;
+ }
+ .sidebar {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 1rem;
+ }
 }
-
 @media (max-width: 700px) {
-  .navbar { padding: 0 1.25rem; }
-  .nav-links, .nav-cta { display: none; }
-  .nav-hamburger { display: flex; }
-  .nav-links.open {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 62px; left: 0; right: 0;
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
-    padding: .75rem 1.25rem 1.25rem;
-    gap: .25rem;
-    box-shadow: var(--shadow-md);
-  }
-  .nav-links.open + .nav-cta { display: flex; padding: 0 1.25rem 1rem; }
-  .page-header { padding: 2.25rem 1.25rem 2rem; }
-  .main-wrap { padding: 1.5rem 1.25rem 3rem; gap: 1.25rem; }
-  .tool-inner { padding: 1.25rem; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .highlight-panel { grid-template-columns: 1fr; }
-  .sidebar { grid-template-columns: 1fr; }
-  .char-freq-grid { grid-template-columns: repeat(5, 1fr); }
-  footer { padding: 2rem 1.25rem; }
+ .navbar { padding: 0 1.25rem; }
+ .nav-links, .nav-cta { display: none; }
+ .nav-hamburger { display: flex; }
+ .nav-links.open {
+ display: flex;
+ flex-direction: column;
+ position: fixed;
+ top: 62px; left: 0; right: 0;
+ background: var(--white);
+ border-bottom: 1px solid var(--border);
+ padding: .75rem 1.25rem 1.25rem;
+ gap: .25rem;
+ box-shadow: var(--shadow-md);
+ }
+ .nav-links.open + .nav-cta { display: flex; padding: 0 1.25rem 1rem; }
+ .page-header { padding: 2.25rem 1.25rem 2rem; }
+ .main-wrap { padding: 1.5rem 1.25rem 3rem; gap: 1.25rem; }
+ .tool-inner { padding: 1.25rem; }
+ .stats-grid { grid-template-columns: 1fr 1fr; }
+ .highlight-panel { grid-template-columns: 1fr; }
+ .sidebar { grid-template-columns: 1fr; }
+ .char-freq-grid { grid-template-columns: repeat(5, 1fr); }
+ footer { padding: 2rem 1.25rem; }
 }
-
 @media (max-width: 400px) {
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .stat-box .s-value { font-size: 1.45rem; }
+ .stats-grid { grid-template-columns: 1fr 1fr; }
+ .stat-box .s-value { font-size: 1.45rem; }
+}
+/* ================================================================
+ NUMBER FLASH ANIMATION
+================================================================ */
+@keyframes numFlash {
+ 0% { color: var(--ink); }
+ 30% { color: var(--rust); transform: scale(1.06); }
+ 100% { color: var(--ink); transform: scale(1); }
+}
+.s-value.flash {
+ animation: numFlash .38s ease forwards;
+ display: inline-block;
 }
 
 /* ================================================================
-   NUMBER FLASH ANIMATION
+ SEO CONTENT SECTION
 ================================================================ */
-@keyframes numFlash {
-  0%   { color: var(--ink); }
-  30%  { color: var(--rust); transform: scale(1.06); }
-  100% { color: var(--ink); transform: scale(1); }
+.seo-content-section {
+ background: var(--white);
+ border-top: 1px solid var(--border);
+ padding: 4rem 2rem 5rem;
 }
-
-.s-value.flash {
-  animation: numFlash .38s ease forwards;
-  display: inline-block;
+.seo-content-inner {
+ max-width: 860px;
+ margin: 0 auto;
+}
+.seo-content-inner h2 {
+ font-family: var(--serif);
+ font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+ font-weight: 600;
+ color: var(--ink);
+ line-height: 1.22;
+ letter-spacing: -.4px;
+ margin-bottom: 1rem;
+ margin-top: 2.75rem;
+}
+.seo-content-inner h2:first-child {
+ margin-top: 0;
+}
+.seo-content-inner h2 em {
+ font-style: italic;
+ color: var(--rust);
+}
+.seo-content-inner h3 {
+ font-family: var(--serif);
+ font-size: 1.2rem;
+ font-weight: 600;
+ color: var(--ink2);
+ letter-spacing: -.25px;
+ margin-bottom: .6rem;
+ margin-top: 1.75rem;
+}
+.seo-content-inner p {
+ font-family: var(--sans);
+ font-size: 1rem;
+ color: var(--ink3);
+ line-height: 1.8;
+ margin-bottom: 1.1rem;
+}
+.seo-content-inner p strong {
+ color: var(--ink2);
+ font-weight: 600;
+}
+.seo-content-inner ul,
+.seo-content-inner ol {
+ font-family: var(--sans);
+ font-size: 1rem;
+ color: var(--ink3);
+ line-height: 1.8;
+ margin-bottom: 1.25rem;
+ padding-left: 1.4rem;
+}
+.seo-content-inner ul li,
+.seo-content-inner ol li {
+ margin-bottom: .45rem;
+}
+.seo-content-inner ul li strong,
+.seo-content-inner ol li strong {
+ color: var(--ink2);
+ font-weight: 600;
+}
+.seo-divider {
+ height: 1px;
+ background: var(--border);
+ margin: 2.5rem 0;
+}
+.seo-highlight-box {
+ background: var(--teal-l);
+ border: 1px solid rgba(26,122,110,.15);
+ border-left: 3px solid var(--teal);
+ border-radius: var(--r-md);
+ padding: 1.25rem 1.5rem;
+ margin: 1.75rem 0;
+}
+.seo-highlight-box p {
+ margin-bottom: 0;
+ font-size: .97rem;
+ color: var(--ink2);
+}
+.seo-faq-item {
+ border-bottom: 1px solid var(--border);
+ padding: 1.25rem 0;
+}
+.seo-faq-item:last-child {
+ border-bottom: none;
+}
+.seo-faq-item h3 {
+ margin-top: 0;
+ margin-bottom: .5rem;
+ font-size: 1.05rem;
+ color: var(--ink);
+}
+.seo-faq-item p {
+ margin-bottom: 0;
+}
+@media (max-width: 700px) {
+ .seo-content-section { padding: 3rem 1.25rem 4rem; }
 }
 </style>
 </head>
 <body>
-
 <!-- ============================================================
-     NAVBAR
+ NAVBAR
 ============================================================ -->
 <nav class="navbar" role="navigation" aria-label="Main navigation">
-  <div class="navbar-inner">
-    <a href="#" class="nav-logo" aria-label="ResearchToolsLab home">
-      <div class="nav-logo-box" aria-hidden="true">R</div>
-      <span class="nav-logo-name">ResearchToolsLab</span>
-    </a>
-
-    <ul class="nav-links" id="nav-links" role="list">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Citation Tools</a></li>
-      <li><a href="#" class="active">Text Tools</a></li>
-      <li><a href="#">Writing Aids</a></li>
-      <li><a href="#">Blog</a></li>
-    </ul>
-
-    <a href="#" class="btn btn-gen nav-cta" aria-label="Get started with ResearchToolsLab">
-      Get Started
-    </a>
-
-    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
+ <div class="navbar-inner">
+ <a href="#" class="nav-logo" aria-label="ResearchToolsLab home">
+ <div class="nav-logo-box" aria-hidden="true">R</div>
+ <span class="nav-logo-name">ResearchToolsLab</span>
+ </a>
+ <ul class="nav-links" id="nav-links" role="list">
+ <li><a href="#">Home</a></li>
+ <li><a href="#">Citation Tools</a></li>
+ <li><a href="#" class="active">Text Tools</a></li>
+ <li><a href="#">Writing Aids</a></li>
+ <li><a href="#">Blog</a></li>
+ </ul>
+ <a href="#" class="btn btn-gen nav-cta" aria-label="Get started with ResearchToolsLab">
+ Get Started
+ </a>
+ <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
 </nav>
 
 <!-- ============================================================
-     PAGE HEADER
+ PAGE HEADER
 ============================================================ -->
 <header class="page-header" role="banner">
-  <div class="page-header-inner">
-    <!-- Breadcrumb -->
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="#">Home</a>
-      <span class="sep" aria-hidden="true">›</span>
-      <a href="#">Text Tools</a>
-      <span class="sep" aria-hidden="true">›</span>
-      <span aria-current="page">Word Analyzer</span>
-    </nav>
-
-    <!-- Title -->
-    <h1>Word &amp; Text <em>Analyzer</em></h1>
-
-    <p class="subtitle">
-      Paste or type any text to get instant, detailed statistics — word counts,
-      reading time, keyword density, and deep linguistic metrics, all in real time.
-    </p>
-
-    <!-- Badge pills -->
-    <div class="badge-row" role="list" aria-label="Tool features">
-      <span class="badge-pill badge-teal" role="listitem">✦ Real-Time Analysis</span>
-      <span class="badge-pill badge-rust" role="listitem">✦ Keyword Density</span>
-      <span class="badge-pill badge-blue" role="listitem">✦ Reading Time</span>
-      <span class="badge-pill badge-gold" role="listitem">✦ Speaking Time</span>
-      <span class="badge-pill badge-ink"  role="listitem">✦ No Sign-Up</span>
-    </div>
-  </div>
+ <div class="page-header-inner">
+ <!-- Breadcrumb -->
+ <nav class="breadcrumb" aria-label="Breadcrumb">
+ <a href="#">Home</a>
+ <span class="sep" aria-hidden="true">›</span>
+ <a href="#">Text Tools</a>
+ <span class="sep" aria-hidden="true">›</span>
+ <span aria-current="page">Word Analyzer</span>
+ </nav>
+ <!-- Title -->
+ <h1>Word &amp; Text <em>Analyzer</em></h1>
+ <p class="subtitle">
+ Paste or type any text to get instant, detailed statistics — word counts,
+ reading time, keyword density, and deep linguistic metrics, all in real time.
+ </p>
+ <!-- Badge pills -->
+ <div class="badge-row" role="list" aria-label="Tool features">
+ <span class="badge-pill badge-teal" role="listitem">✦ Real-Time Analysis</span>
+ <span class="badge-pill badge-rust" role="listitem">✦ Keyword Density</span>
+ <span class="badge-pill badge-blue" role="listitem">✦ Reading Time</span>
+ <span class="badge-pill badge-gold" role="listitem">✦ Speaking Time</span>
+ <span class="badge-pill badge-ink" role="listitem">✦ No Sign-Up</span>
+ </div>
+ </div>
 </header>
 
 <!-- ============================================================
-     MAIN TOOL AREA
+ MAIN TOOL AREA
 ============================================================ -->
 <main class="main-wrap" id="main-content" role="main">
+ <!-- ===================== LEFT: TOOL CARD ===================== -->
+ <div>
+ <div class="tool-card">
+ <div class="tool-inner">
+ <!-- Input label + action buttons -->
+ <div class="input-label">
+ <label class="input-label-text" for="text-input">Your Text</label>
+ <div class="input-actions">
+ <button class="btn btn-ghost btn-icon" id="btn-copy" title="Copy text" aria-label="Copy text to clipboard">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+ Copy
+ </button>
+ <button class="btn btn-ghost btn-icon" id="btn-paste" title="Paste from clipboard" aria-label="Paste text from clipboard">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+ Paste
+ </button>
+ <button class="btn btn-ghost btn-icon" id="btn-sample" title="Load sample text" aria-label="Load sample text">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+ Sample
+ </button>
+ <button class="btn btn-ghost btn-icon" id="btn-clear" title="Clear text" aria-label="Clear all text" style="color:var(--rust);">
+ <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+ Clear
+ </button>
+ </div>
+ </div>
+ <!-- Textarea -->
+ <div class="textarea-wrap">
+ <textarea
+ id="text-input"
+ placeholder="Type or paste your text here to begin analysis…"
+ aria-label="Text input area for analysis"
+ aria-describedby="char-counter"
+ spellcheck="true"
+ autocorrect="off"
+ ></textarea>
+ <span class="char-counter" id="char-counter" aria-live="polite" aria-label="Character count">0 chars</span>
+ </div>
+ <!-- Toggle options -->
+ <div class="options-bar" role="group" aria-label="Analysis options">
+ <label class="toggle-wrap" for="opt-stopwords" title="Exclude common words like 'the', 'and', 'is' from keyword analysis">
+ <input type="checkbox" id="opt-stopwords" checked />
+ <span class="toggle-chip"><span class="dot"></span>Exclude Stop Words</span>
+ </label>
+ <label class="toggle-wrap" for="opt-spaces" title="Toggle whether spaces are included in character count">
+ <input type="checkbox" id="opt-spaces" />
+ <span class="toggle-chip"><span class="dot"></span>Chars Without Spaces</span>
+ </label>
+ <label class="toggle-wrap" for="opt-charfreq" title="Show character frequency breakdown">
+ <input type="checkbox" id="opt-charfreq" />
+ <span class="toggle-chip"><span class="dot"></span>Char Frequency</span>
+ </label>
+ <label class="toggle-wrap" for="opt-case" title="Treat uppercase and lowercase as the same word">
+ <input type="checkbox" id="opt-case" checked />
+ <span class="toggle-chip"><span class="dot"></span>Ignore Case</span>
+ </label>
+ </div>
+ </div><!-- /tool-inner -->
+ <!-- Divider inside card -->
+ <div style="height:1px;background:var(--border);"></div>
+ <!-- Stats section -->
+ <div class="tool-inner">
+ <!-- Quick stats heading -->
+ <div class="quick-stats-heading">
+ <span class="section-label">Core Statistics</span>
+ <span class="score-pill pill-empty" id="vocab-pill">—</span>
+ </div>
+ <!-- 6-stat grid -->
+ <div class="stats-grid" role="region" aria-label="Core text statistics" aria-live="polite" aria-atomic="false">
+ <div class="stat-box accent-rust">
+ <span class="s-label">Words</span>
+ <span class="s-value" id="st-words" aria-label="Word count">0</span>
+ <span class="s-sub" id="st-unique-sub">0 unique</span>
+ </div>
+ <div class="stat-box accent-teal">
+ <span class="s-label" id="chars-label">Characters</span>
+ <span class="s-value" id="st-chars" aria-label="Character count">0</span>
+ <span class="s-sub" id="chars-sub">incl. spaces</span>
+ </div>
+ <div class="stat-box accent-blue">
+ <span class="s-label">Sentences</span>
+ <span class="s-value" id="st-sentences" aria-label="Sentence count">0</span>
+ <span class="s-sub" id="st-avg-sent-sub">0 avg words</span>
+ </div>
+ <div class="stat-box accent-gold">
+ <span class="s-label">Paragraphs</span>
+ <span class="s-value" id="st-paragraphs" aria-label="Paragraph count">0</span>
+ <span class="s-sub" id="st-avg-para-sub">0 avg words</span>
+ </div>
+ <div class="stat-box accent-ink">
+ <span class="s-label">Lines</span>
+ <span class="s-value" id="st-lines" aria-label="Line count">0</span>
+ <span class="s-sub" id="st-spaces-sub">0 spaces</span>
+ </div>
+ <div class="stat-box accent-rust">
+ <span class="s-label">Avg Word Len</span>
+ <span class="s-value" id="st-avgword" aria-label="Average word length">0</span>
+ <span class="s-sub">characters</span>
+ </div>
+ </div><!-- /stats-grid -->
+ <!-- Reading / speaking time -->
+ <div class="highlight-panel" role="region" aria-label="Time estimates" aria-live="polite">
+ <div class="time-card reading-card">
+ <span class="tc-icon" aria-hidden="true">📖</span>
+ <span class="tc-label">Reading Time</span>
+ <span class="tc-value" id="time-read">—</span>
+ <span class="tc-sub">at ~200 words/min</span>
+ </div>
+ <div class="time-card speaking-card">
+ <span class="tc-icon" aria-hidden="true">🎙</span>
+ <span class="tc-label">Speaking Time</span>
+ <span class="tc-value" id="time-speak">—</span>
+ <span class="tc-sub">at ~130 words/min</span>
+ </div>
+ </div>
+ <!-- Vocabulary richness bar -->
+ <div class="teal-box" id="richness-box" style="margin-top:1.1rem;">
+ <div class="tb-label">Vocabulary Richness (Type-Token Ratio)</div>
+ <div class="richness-bar-wrap">
+ <div class="richness-bar-track">
+ <div class="richness-bar-fill" id="richness-bar" style="width:0%"></div>
+ </div>
+ <div class="richness-labels">
+ <span>Repetitive</span>
+ <span id="richness-pct" style="color:var(--ink2);font-weight:500;">—</span>
+ <span>Diverse</span>
+ </div>
+ </div>
+ </div>
+ <!-- Character frequency (optional) -->
+ <div class="char-freq-section" id="char-freq-section">
+ <div style="height:1px;background:var(--border);margin:1.25rem 0;"></div>
+ <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem;">
+ <span class="section-label">Character Frequency</span>
+ <span class="score-pill pill-avg" id="char-freq-total-label">—</span>
+ </div>
+ <div class="char-freq-grid" id="char-freq-grid" aria-label="Character frequency breakdown" aria-live="polite"></div>
+ </div>
+ </div><!-- /tool-inner stats -->
+ </div><!-- /tool-card -->
+ </div><!-- /left col -->
 
-  <!-- ===================== LEFT: TOOL CARD ===================== -->
-  <div>
-    <div class="tool-card">
-      <div class="tool-inner">
-
-        <!-- Input label + action buttons -->
-        <div class="input-label">
-          <label class="input-label-text" for="text-input">Your Text</label>
-          <div class="input-actions">
-            <button class="btn btn-ghost btn-icon" id="btn-copy" title="Copy text" aria-label="Copy text to clipboard">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              Copy
-            </button>
-            <button class="btn btn-ghost btn-icon" id="btn-paste" title="Paste from clipboard" aria-label="Paste text from clipboard">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
-              Paste
-            </button>
-            <button class="btn btn-ghost btn-icon" id="btn-sample" title="Load sample text" aria-label="Load sample text">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Sample
-            </button>
-            <button class="btn btn-ghost btn-icon" id="btn-clear" title="Clear text" aria-label="Clear all text" style="color:var(--rust);">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-              Clear
-            </button>
-          </div>
-        </div>
-
-        <!-- Textarea -->
-        <div class="textarea-wrap">
-          <textarea
-            id="text-input"
-            placeholder="Type or paste your text here to begin analysis…"
-            aria-label="Text input area for analysis"
-            aria-describedby="char-counter"
-            spellcheck="true"
-            autocorrect="off"
-          ></textarea>
-          <span class="char-counter" id="char-counter" aria-live="polite" aria-label="Character count">0 chars</span>
-        </div>
-
-        <!-- Toggle options -->
-        <div class="options-bar" role="group" aria-label="Analysis options">
-          <label class="toggle-wrap" for="opt-stopwords" title="Exclude common words like 'the', 'and', 'is' from keyword analysis">
-            <input type="checkbox" id="opt-stopwords" checked />
-            <span class="toggle-chip"><span class="dot"></span>Exclude Stop Words</span>
-          </label>
-          <label class="toggle-wrap" for="opt-spaces" title="Toggle whether spaces are included in character count">
-            <input type="checkbox" id="opt-spaces" />
-            <span class="toggle-chip"><span class="dot"></span>Chars Without Spaces</span>
-          </label>
-          <label class="toggle-wrap" for="opt-charfreq" title="Show character frequency breakdown">
-            <input type="checkbox" id="opt-charfreq" />
-            <span class="toggle-chip"><span class="dot"></span>Char Frequency</span>
-          </label>
-          <label class="toggle-wrap" for="opt-case" title="Treat uppercase and lowercase as the same word">
-            <input type="checkbox" id="opt-case" checked />
-            <span class="toggle-chip"><span class="dot"></span>Ignore Case</span>
-          </label>
-        </div>
-
-      </div><!-- /tool-inner -->
-
-      <!-- Divider inside card -->
-      <div style="height:1px;background:var(--border);"></div>
-
-      <!-- Stats section -->
-      <div class="tool-inner">
-
-        <!-- Quick stats heading -->
-        <div class="quick-stats-heading">
-          <span class="section-label">Core Statistics</span>
-          <span class="score-pill pill-empty" id="vocab-pill">—</span>
-        </div>
-
-        <!-- 6-stat grid -->
-        <div class="stats-grid" role="region" aria-label="Core text statistics" aria-live="polite" aria-atomic="false">
-
-          <div class="stat-box accent-rust">
-            <span class="s-label">Words</span>
-            <span class="s-value" id="st-words" aria-label="Word count">0</span>
-            <span class="s-sub" id="st-unique-sub">0 unique</span>
-          </div>
-
-          <div class="stat-box accent-teal">
-            <span class="s-label" id="chars-label">Characters</span>
-            <span class="s-value" id="st-chars" aria-label="Character count">0</span>
-            <span class="s-sub" id="chars-sub">incl. spaces</span>
-          </div>
-
-          <div class="stat-box accent-blue">
-            <span class="s-label">Sentences</span>
-            <span class="s-value" id="st-sentences" aria-label="Sentence count">0</span>
-            <span class="s-sub" id="st-avg-sent-sub">0 avg words</span>
-          </div>
-
-          <div class="stat-box accent-gold">
-            <span class="s-label">Paragraphs</span>
-            <span class="s-value" id="st-paragraphs" aria-label="Paragraph count">0</span>
-            <span class="s-sub" id="st-avg-para-sub">0 avg words</span>
-          </div>
-
-          <div class="stat-box accent-ink">
-            <span class="s-label">Lines</span>
-            <span class="s-value" id="st-lines" aria-label="Line count">0</span>
-            <span class="s-sub" id="st-spaces-sub">0 spaces</span>
-          </div>
-
-          <div class="stat-box accent-rust">
-            <span class="s-label">Avg Word Len</span>
-            <span class="s-value" id="st-avgword" aria-label="Average word length">0</span>
-            <span class="s-sub">characters</span>
-          </div>
-
-        </div><!-- /stats-grid -->
-
-        <!-- Reading / speaking time -->
-        <div class="highlight-panel" role="region" aria-label="Time estimates" aria-live="polite">
-          <div class="time-card reading-card">
-            <span class="tc-icon" aria-hidden="true">📖</span>
-            <span class="tc-label">Reading Time</span>
-            <span class="tc-value" id="time-read">—</span>
-            <span class="tc-sub">at ~200 words/min</span>
-          </div>
-          <div class="time-card speaking-card">
-            <span class="tc-icon" aria-hidden="true">🎙️</span>
-            <span class="tc-label">Speaking Time</span>
-            <span class="tc-value" id="time-speak">—</span>
-            <span class="tc-sub">at ~130 words/min</span>
-          </div>
-        </div>
-
-        <!-- Vocabulary richness bar -->
-        <div class="teal-box" id="richness-box" style="margin-top:1.1rem;">
-          <div class="tb-label">Vocabulary Richness (Type-Token Ratio)</div>
-          <div class="richness-bar-wrap">
-            <div class="richness-bar-track">
-              <div class="richness-bar-fill" id="richness-bar" style="width:0%"></div>
-            </div>
-            <div class="richness-labels">
-              <span>Repetitive</span>
-              <span id="richness-pct" style="color:var(--ink2);font-weight:500;">—</span>
-              <span>Diverse</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Character frequency (optional) -->
-        <div class="char-freq-section" id="char-freq-section">
-          <div style="height:1px;background:var(--border);margin:1.25rem 0;"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem;">
-            <span class="section-label">Character Frequency</span>
-            <span class="score-pill pill-avg" id="char-freq-total-label">—</span>
-          </div>
-          <div class="char-freq-grid" id="char-freq-grid" aria-label="Character frequency breakdown" aria-live="polite"></div>
-        </div>
-
-      </div><!-- /tool-inner stats -->
-    </div><!-- /tool-card -->
-  </div><!-- /left col -->
-
-  <!-- ===================== RIGHT: SIDEBAR ===================== -->
-  <aside class="sidebar" role="complementary" aria-label="Analysis details">
-
-    <!-- Keyword Density -->
-    <div class="side-card">
-      <div class="side-card-header">
-        <span class="side-card-title">
-          <span class="icon" aria-hidden="true">🏷️</span> Keyword Density
-        </span>
-        <span class="badge-pill badge-teal">Top 5</span>
-      </div>
-      <div class="side-card-body">
-        <div class="keyword-list" id="keyword-list" role="list" aria-label="Top keywords" aria-live="polite">
-          <p class="kw-empty">Start typing to see keyword density…</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Word Details -->
-    <div class="side-card">
-      <div class="side-card-header">
-        <span class="side-card-title">
-          <span class="icon" aria-hidden="true">🔬</span> Word Details
-        </span>
-      </div>
-      <div class="side-card-body" style="padding:0 1.25rem;">
-        <div class="detail-list" role="list" aria-label="Word details" aria-live="polite">
-          <div class="detail-row" role="listitem">
-            <span class="detail-label">Longest</span>
-            <span class="detail-value" id="wd-longest">—</span>
-          </div>
-          <div class="detail-row" role="listitem">
-            <span class="detail-label">Shortest</span>
-            <span class="detail-value" id="wd-shortest">—</span>
-          </div>
-          <div class="detail-row" role="listitem">
-            <span class="detail-label">Unique</span>
-            <span class="detail-value" id="wd-unique">—</span>
-          </div>
-          <div class="detail-row" role="listitem">
-            <span class="detail-label">Avg Length</span>
-            <span class="detail-value" id="wd-avglen">—</span>
-          </div>
-          <div class="detail-row" role="listitem">
-            <span class="detail-label">Spaces</span>
-            <span class="detail-value" id="wd-spaces">—</span>
-          </div>
-          <div class="detail-row" role="listitem">
-            <span class="detail-label">Numbers</span>
-            <span class="detail-value" id="wd-numbers">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Most Frequent Words -->
-    <div class="side-card">
-      <div class="side-card-header">
-        <span class="side-card-title">
-          <span class="icon" aria-hidden="true">📊</span> Most Frequent
-        </span>
-        <span class="badge-pill badge-rust">Top 10</span>
-      </div>
-      <div class="side-card-body" style="padding:0 1.25rem;">
-        <div class="freq-list" id="freq-list" role="list" aria-label="Most frequent words" aria-live="polite">
-          <p class="kw-empty" style="padding:.75rem 0 .5rem;">No data yet…</p>
-        </div>
-      </div>
-    </div>
-
-  </aside><!-- /sidebar -->
+ <!-- ===================== RIGHT: SIDEBAR ===================== -->
+ <aside class="sidebar" role="complementary" aria-label="Analysis details">
+ <!-- Keyword Density -->
+ <div class="side-card">
+ <div class="side-card-header">
+ <span class="side-card-title">
+ <span class="icon" aria-hidden="true">🔍</span> Keyword Density
+ </span>
+ <span class="badge-pill badge-teal">Top 5</span>
+ </div>
+ <div class="side-card-body">
+ <div class="keyword-list" id="keyword-list" role="list" aria-label="Top keywords" aria-live="polite">
+ <p class="kw-empty">Start typing to see keyword density…</p>
+ </div>
+ </div>
+ </div>
+ <!-- Word Details -->
+ <div class="side-card">
+ <div class="side-card-header">
+ <span class="side-card-title">
+ <span class="icon" aria-hidden="true">📝</span> Word Details
+ </span>
+ </div>
+ <div class="side-card-body" style="padding:0 1.25rem;">
+ <div class="detail-list" role="list" aria-label="Word details" aria-live="polite">
+ <div class="detail-row" role="listitem">
+ <span class="detail-label">Longest</span>
+ <span class="detail-value" id="wd-longest">—</span>
+ </div>
+ <div class="detail-row" role="listitem">
+ <span class="detail-label">Shortest</span>
+ <span class="detail-value" id="wd-shortest">—</span>
+ </div>
+ <div class="detail-row" role="listitem">
+ <span class="detail-label">Unique</span>
+ <span class="detail-value" id="wd-unique">—</span>
+ </div>
+ <div class="detail-row" role="listitem">
+ <span class="detail-label">Avg Length</span>
+ <span class="detail-value" id="wd-avglen">—</span>
+ </div>
+ <div class="detail-row" role="listitem">
+ <span class="detail-label">Spaces</span>
+ <span class="detail-value" id="wd-spaces">—</span>
+ </div>
+ <div class="detail-row" role="listitem">
+ <span class="detail-label">Numbers</span>
+ <span class="detail-value" id="wd-numbers">—</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ <!-- Most Frequent Words -->
+ <div class="side-card">
+ <div class="side-card-header">
+ <span class="side-card-title">
+ <span class="icon" aria-hidden="true">📊</span> Most Frequent
+ </span>
+ <span class="badge-pill badge-rust">Top 10</span>
+ </div>
+ <div class="side-card-body" style="padding:0 1.25rem;">
+ <div class="freq-list" id="freq-list" role="list" aria-label="Most frequent words" aria-live="polite">
+ <p class="kw-empty" style="padding:.75rem 0 .5rem;">No data yet…</p>
+ </div>
+ </div>
+ </div>
+ </aside><!-- /sidebar -->
 </main><!-- /main-wrap -->
 
 <!-- ============================================================
-     FOOTER
+ SEO CONTENT SECTION
+============================================================ -->
+<section class="seo-content-section" aria-label="About the Word and Text Analyzer">
+ <div class="seo-content-inner">
+
+ <h2>The Free Online Word &amp; Text <em>Analyzer</em> — Everything You Need to Know About Your Writing</h2>
+ <p>Whether you're a student polishing a final essay, a content marketer fine-tuning an SEO article, an academic researcher auditing a manuscript, or a novelist tracking your prose rhythm — our <strong>free online word counter and text analyzer</strong> gives you the deep, real-time linguistic data you've always needed in one place. No account required. No file uploads. No waiting. Just paste your text and watch every metric update instantly.</p>
+ <p>This tool goes far beyond a basic word count. It delivers a complete <strong>text analysis</strong> that covers character counts, sentence structure, paragraph metrics, reading time estimates, speaking time calculations, keyword density breakdowns, vocabulary richness scoring, and even character-level frequency analysis. It is, quite simply, the most comprehensive <strong>free text analyzer</strong> available online today.</p>
+
+ <div class="seo-divider"></div>
+
+ <h2>What Does This Word Counter &amp; Text Analyzer Actually Measure?</h2>
+ <p>Most word counters stop at the word count. Ours starts there and keeps going. Here is a complete breakdown of every metric this <strong>online text analysis tool</strong> computes — all updated in real time as you type or paste:</p>
+
+ <h3>Core Text Statistics</h3>
+ <ul>
+ <li><strong>Word Count:</strong> The total number of words in your text, updated keystroke by keystroke. Ideal for hitting essay word limits, blog post targets, or social media character caps.</li>
+ <li><strong>Character Count (with &amp; without spaces):</strong> Toggle between characters including spaces and characters excluding spaces — critical for platforms like Twitter/X, SMS, or meta descriptions that count characters strictly.</li>
+ <li><strong>Sentence Count:</strong> Automatically detects sentences based on terminal punctuation (periods, exclamation marks, question marks) and shows the average words per sentence — a key readability indicator.</li>
+ <li><strong>Paragraph Count:</strong> Counts distinct paragraphs separated by line breaks, plus average words per paragraph, helping you assess whether your document structure is balanced and reader-friendly.</li>
+ <li><strong>Line Count:</strong> Total number of lines in your text, including blank lines — useful for poetry, code comments, and formatted documents.</li>
+ <li><strong>Average Word Length:</strong> The mean number of characters per word, a subtle but powerful signal of vocabulary complexity and readability level.</li>
+ </ul>
+
+ <h3>Reading Time &amp; Speaking Time Estimator</h3>
+ <p>Our <strong>reading time calculator</strong> uses a standard average reading speed of 200 words per minute — the widely accepted benchmark for average adult silent reading. Our <strong>speaking time estimator</strong> uses 130 words per minute, consistent with professional presentation and podcast pacing standards. These estimates update live so you can instantly know whether your blog post is a 3-minute read or your speech fits in a 10-minute slot.</p>
+
+ <div class="seo-highlight-box">
+ <p>💡 <strong>Pro tip for content creators:</strong> Research consistently shows that blog posts in the 1,500–2,500 word range (roughly 7–12 minute reads) earn more backlinks and rank higher on Google than shorter content. Use the reading time tracker to hit that sweet spot every time.</p>
+ </div>
+
+ <h3>Keyword Density Checker</h3>
+ <p>The <strong>keyword density tool</strong> in the right sidebar identifies the top 5 most-used meaningful words in your text, expressed both as a raw count and as a percentage of total word count. With the "Exclude Stop Words" toggle enabled (on by default), common filler words like "the," "and," "is," and "that" are filtered out automatically, leaving you with the words that actually carry meaning — your real keywords.</p>
+ <p>This feature is invaluable for <strong>SEO content writing</strong>. Google's algorithms consider keyword frequency and natural distribution as ranking signals. Over-stuffing a keyword above 3–4% density can trigger spam filters; under-using it means missed ranking opportunities. Our keyword density visualizer shows you exactly where you stand with animated progress bars for at-a-glance optimization.</p>
+
+ <h3>Vocabulary Richness Score (Type-Token Ratio)</h3>
+ <p>The <strong>vocabulary richness meter</strong> measures your Type-Token Ratio (TTR) — the proportion of unique words to total words. A TTR of 65% or above earns a "Rich Vocab" rating, indicating a diverse, sophisticated vocabulary. A TTR below 40% signals repetitive writing that may disengage readers. Academic papers, literary fiction, and high-quality journalism consistently score in the upper range; formulaic or keyword-stuffed content scores low.</p>
+ <p>Writers and editors can use TTR as an objective editing signal: if your score is low, seek synonyms, vary sentence openers, and reduce repeated noun phrases. This single metric can meaningfully elevate the quality of any piece of writing.</p>
+
+ <h3>Word Details Panel</h3>
+ <p>The Word Details sidebar card surfaces granular linguistic metadata that most word counters completely ignore:</p>
+ <ul>
+ <li><strong>Longest word</strong> — identifies the most complex term in your text, highlighted in the tool's signature rust color.</li>
+ <li><strong>Shortest word</strong> — often reveals function words or abbreviations that anchor sentence rhythm.</li>
+ <li><strong>Unique word count vs. total words</strong> — the raw numbers behind your TTR score.</li>
+ <li><strong>Average word length in characters</strong> — a precision readability signal used in the Flesch-Kincaid and Gunning Fog readability formulas.</li>
+ <li><strong>Space count</strong> — useful for character-limited contexts that count spaces separately.</li>
+ <li><strong>Number tokens</strong> — counts standalone numeric values in your text, helping researchers and data journalists audit quantitative density.</li>
+ </ul>
+
+ <h3>Most Frequent Words List</h3>
+ <p>The Most Frequent Words panel ranks your top 10 most-used words with proportional bar visualizations, ranked badges, and occurrence counts. Unlike the keyword density panel, this list includes all words (including stop words if you prefer) so you can audit every layer of your text's word distribution. Writers often discover unconscious verbal habits here — repeated filler phrases, overused adjectives, or structural tics that, once spotted, are easy to fix.</p>
+
+ <h3>Character Frequency Analysis</h3>
+ <p>Toggle on the optional <strong>character frequency breakdown</strong> to see which letters appear most often in your text. This feature is particularly useful for cryptographers, linguists, puzzle designers, Scrabble enthusiasts, and language learners studying letter distribution patterns. The top 18 characters are displayed in a compact grid with mini bar charts showing relative frequency.</p>
+
+ <div class="seo-divider"></div>
+
+ <h2>Who Uses a Text Analyzer? Real Use Cases Across Every Discipline</h2>
+
+ <h3>Students &amp; Academic Writers</h3>
+ <p>Meeting a 2,500-word essay requirement? Checking whether your thesis statement section is proportionally sized? Auditing your abstract for keyword repetition before submission? Academic writers rely on precise word and character counts daily. Our tool is particularly valuable for <strong>university students</strong> because it handles all of these tasks simultaneously, without requiring any software installation or login — ideal in exam prep environments or on shared library computers.</p>
+
+ <h3>SEO Professionals &amp; Content Marketers</h3>
+ <p>For <strong>SEO content writers</strong>, this tool is a pre-publication checklist rolled into a single interface. Check word count against your content brief, verify keyword density is in the optimal 1–3% range, confirm reading time matches your audience's attention span, and audit vocabulary richness to avoid thin-content penalties. These are exactly the metrics that separate content that ranks from content that languishes on page four.</p>
+
+ <h3>Authors, Novelists &amp; Bloggers</h3>
+ <p>Fiction writers tracking daily word count goals, bloggers monitoring post length, copywriters checking headline character limits — all benefit from real-time feedback. The reading time estimate is especially useful for bloggers who want to display accurate "X-minute read" labels on their posts, a feature proven to increase click-through rates from social media and email newsletters.</p>
+
+ <h3>Educators &amp; Teachers</h3>
+ <p>Teachers can use this tool to analyze student writing samples for vocabulary richness, sentence variety, and structural balance — providing data-driven feedback that goes beyond subjective impression. The average words per sentence and average words per paragraph metrics are particularly diagnostic for identifying developmental writing patterns in ESL and EFL learners.</p>
+
+ <h3>Journalists &amp; Editors</h3>
+ <p>Magazine articles, newspaper features, and online journalism all operate within strict word count windows. Editors copy-paste drafts into this tool to instantly verify length before routing pieces for layout. The keyword density checker also helps news editors ensure topics are covered with appropriate depth without accidental over-repetition of terms.</p>
+
+ <h3>Public Speakers &amp; Podcast Hosts</h3>
+ <p>The <strong>speaking time calculator</strong> is a game-changer for anyone who presents publicly. Paste your prepared remarks, check the speaking time estimate at 130 words per minute, and know immediately whether your keynote runs 18 minutes or 22 minutes — before you're standing at the podium. Podcast script writers use the same feature to hit target episode lengths without a stopwatch.</p>
+
+ <div class="seo-divider"></div>
+
+ <h2>How to Use the Word &amp; Text Analyzer — Step by Step</h2>
+ <ol>
+ <li><strong>Paste or type your text</strong> into the large input area. Analysis begins immediately — no button click required.</li>
+ <li><strong>Review the Core Statistics grid</strong> for word count, character count, sentences, paragraphs, lines, and average word length.</li>
+ <li><strong>Check Reading Time and Speaking Time</strong> in the blue and gold cards below the stats grid.</li>
+ <li><strong>Examine Vocabulary Richness</strong> via the animated gradient bar and the Rich/Avg/Repetitive pill badge.</li>
+ <li><strong>Open the Keyword Density panel</strong> in the right sidebar to see your top 5 content keywords with density percentages.</li>
+ <li><strong>Review Word Details</strong> for longest word, shortest word, unique count, and numeric token data.</li>
+ <li><strong>Browse Most Frequent Words</strong> to spot unconscious verbal habits and repetition patterns.</li>
+ <li><strong>Toggle "Char Frequency"</strong> if you want the optional character-level breakdown grid.</li>
+ <li><strong>Use the action buttons</strong> — Copy, Paste, Sample, or Clear — to manage your text input efficiently.</li>
+ <li><strong>Adjust analysis options</strong> using the toggle chips: exclude stop words, switch character counting mode, toggle case sensitivity, or enable character frequency.</li>
+ </ol>
+
+ <div class="seo-divider"></div>
+
+ <h2>Frequently Asked Questions About Word Count &amp; Text Analysis</h2>
+
+ <div class="seo-faq-item">
+ <h3>Is this word counter free to use?</h3>
+ <p>Yes — completely free, forever. No account, no subscription, no watermark, no usage limit. Paste any amount of text and run as many analyses as you need. ResearchToolsLab is built for researchers, writers, and students who need reliable tools without paywalls.</p>
+ </div>
+
+ <div class="seo-faq-item">
+ <h3>Does this tool save or store my text?</h3>
+ <p>No. All analysis runs entirely in your browser using client-side JavaScript. Your text never leaves your device and is never sent to any server. You can verify this by disconnecting from the internet — the tool will continue to work perfectly. This makes it safe for confidential documents, unpublished manuscripts, legal drafts, and sensitive research data.</p>
+ </div>
+
+ <div class="seo-faq-item">
+ <h3>How accurate is the reading time estimate?</h3>
+ <p>Our reading time calculator uses 200 words per minute, the most widely cited benchmark for average adult silent reading speed across published research in cognitive psychology. Speaking time uses 130 words per minute, consistent with professional presentation pacing. Individual rates vary — fast readers may find our estimates conservative; slower readers may find them optimistic — but they are accurate for planning and content labeling purposes.</p>
+ </div>
+
+ <div class="seo-faq-item">
+ <h3>What is keyword density and what percentage is ideal for SEO?</h3>
+ <p>Keyword density is the percentage of times a specific word appears relative to total word count. For SEO purposes, most practitioners recommend a keyword density of 1–3% for primary keywords. Below 1% may signal insufficient topical focus; above 3–4% risks being flagged as keyword stuffing by search engine algorithms. Our keyword density checker shows exact percentages so you can optimize with precision.</p>
+ </div>
+
+ <div class="seo-faq-item">
+ <h3>What is Type-Token Ratio and why does it matter for writing quality?</h3>
+ <p>Type-Token Ratio (TTR) is the ratio of unique words (types) to total words (tokens). A TTR of 1.0 would mean every single word in your text is different — highly diverse but often unnatural. Real writing typically scores between 0.40 and 0.80. Higher TTR scores correlate with richer vocabulary, more engaging prose, and stronger perceived author credibility. Academic research has linked low TTR in student writing with lower grades on writing assessments.</p>
+ </div>
+
+ <div class="seo-faq-item">
+ <h3>Can I analyze text in languages other than English?</h3>
+ <p>The core word count, character count, sentence count, paragraph count, and reading/speaking time metrics work accurately for any Latin-script language. The stop word filter and keyword density tool are optimized for English and will include common English function words if you write in another language — simply disable the "Exclude Stop Words" toggle for non-English text analysis. Character frequency analysis works for any Latin-alphabet language.</p>
+ </div>
+
+ <div class="seo-faq-item">
+ <h3>What is the maximum text size this tool can handle?</h3>
+ <p>Because all processing happens in your browser, the practical limit is your device's memory. The tool handles long-form content — full novels, dissertations, lengthy reports — without issue on any modern laptop or desktop. On mobile devices with limited RAM, very large texts (100,000+ words) may experience slight delay, but will still process correctly.</p>
+ </div>
+
+ <div class="seo-divider"></div>
+
+ <h2>Why ResearchToolsLab Builds Tools Differently</h2>
+ <p>Most online word counters are afterthoughts — simple scripts bolted onto ad-heavy pages with no regard for user experience, privacy, or analytical depth. ResearchToolsLab takes the opposite approach. Every tool we build is designed from first principles for the people who depend on writing for their work and academic life: researchers who need precision, writers who need speed, and students who need reliability.</p>
+ <p>Our <strong>Word &amp; Text Analyzer</strong> updates in real time with a debounced 120-millisecond response — fast enough to feel instant, efficient enough not to tax your CPU on long documents. Every metric animates on change so your eye catches updates without scanning. The interface is fully accessible, keyboard-navigable, and screen-reader compatible. It works offline. It works on mobile. It works on every browser released in the last five years.</p>
+ <p>That is the ResearchToolsLab standard. We hope this tool saves you time, sharpens your writing, and helps you produce work you're proud of — one word at a time.</p>
+
+ </div>
+</section>
+
+<!-- ============================================================
+ FOOTER
 ============================================================ -->
 <footer role="contentinfo">
-  <div class="footer-inner">
-    <div class="footer-logo">
-      <div class="footer-logo-box" aria-hidden="true">R</div>
-      <span class="footer-logo-name">ResearchToolsLab</span>
-    </div>
-    <ul class="footer-links" role="list">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Tools</a></li>
-      <li><a href="#">Blog</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Privacy</a></li>
-      <li><a href="#">Contact</a></li>
-    </ul>
-    <p class="footer-copy">© 2025 ResearchToolsLab · Built for researchers, writers &amp; academics.</p>
-  </div>
+ <div class="footer-inner">
+ <div class="footer-logo">
+ <div class="footer-logo-box" aria-hidden="true">R</div>
+ <span class="footer-logo-name">ResearchToolsLab</span>
+ </div>
+ <ul class="footer-links" role="list">
+ <li><a href="#">Home</a></li>
+ <li><a href="#">Tools</a></li>
+ <li><a href="#">Blog</a></li>
+ <li><a href="#">About</a></li>
+ <li><a href="#">Privacy</a></li>
+ <li><a href="#">Contact</a></li>
+ </ul>
+ <p class="footer-copy">© 2025 ResearchToolsLab · Built for researchers, writers &amp; academics.</p>
+ </div>
 </footer>
 
 <!-- Toast container -->
 <div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <!-- ============================================================
-     JAVASCRIPT
+ JAVASCRIPT
 ============================================================ -->
 <script>
 /* ================================================================
-   STOP WORDS
+ STOP WORDS
 ================================================================ */
 const STOP_WORDS = new Set([
-  "a","about","above","after","again","against","all","also","am","an","and",
-  "any","are","aren't","as","at","be","because","been","before","being","below",
-  "between","both","but","by","can","can't","cannot","could","couldn't","did",
-  "didn't","do","does","doesn't","doing","don't","down","during","each","few",
-  "for","from","further","get","got","had","hadn't","has","hasn't","have",
-  "haven't","having","he","he'd","he'll","he's","her","here","here's","hers",
-  "herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've",
-  "if","in","into","is","isn't","it","it's","its","itself","just","let's","me",
-  "more","most","mustn't","my","myself","no","nor","not","now","of","off","on",
-  "once","only","or","other","ought","our","ours","ourselves","out","over","own",
-  "same","shan't","she","she'd","she'll","she's","should","shouldn't","so",
-  "some","such","than","that","that's","the","their","theirs","them","themselves",
-  "then","there","there's","these","they","they'd","they'll","they're","they've",
-  "this","those","through","to","too","under","until","up","very","was","wasn't",
-  "we","we'd","we'll","we're","we've","were","weren't","what","what's","when",
-  "when's","where","where's","which","while","who","who's","whom","why","why's",
-  "will","with","won't","would","wouldn't","you","you'd","you'll","you're",
-  "you've","your","yours","yourself","yourselves","s","t","ll","re","ve","m","d"
+ "a","about","above","after","again","against","all","also","am","an","and",
+ "any","are","aren't","as","at","be","because","been","before","being","below",
+ "between","both","but","by","can","can't","cannot","could","couldn't","did",
+ "didn't","do","does","doesn't","doing","don't","down","during","each","few",
+ "for","from","further","get","got","had","hadn't","has","hasn't","have",
+ "haven't","having","he","he'd","he'll","he's","her","here","here's","hers",
+ "herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've",
+ "if","in","into","is","isn't","it","it's","its","itself","just","let's","me",
+ "more","most","mustn't","my","myself","no","nor","not","now","of","off","on",
+ "once","only","or","other","ought","our","ours","ourselves","out","over","own",
+ "same","shan't","she","she'd","she'll","she's","should","shouldn't","so",
+ "some","such","than","that","that's","the","their","theirs","them","themselves",
+ "then","there","there's","these","they","they'd","they'll","they're","they've",
+ "this","those","through","to","too","under","until","up","very","was","wasn't",
+ "we","we'd","we'll","we're","we've","were","weren't","what","what's","when",
+ "when's","where","where's","which","while","who","who's","whom","why","why's",
+ "will","with","won't","would","wouldn't","you","you'd","you'll","you're",
+ "you've","your","yours","yourself","yourselves","s","t","ll","re","ve","m","d"
 ]);
 
 /* ================================================================
-   SAMPLE TEXT
+ SAMPLE TEXT
 ================================================================ */
 const SAMPLE_TEXT = `Academic writing demands precision, clarity, and a firm command of language. Whether you are composing a research paper, drafting an essay, or preparing a thesis, the quality of your prose fundamentally shapes how readers perceive your ideas.
 
@@ -1573,490 +1646,437 @@ Reading broadly is perhaps the single most effective strategy for improving your
 Finally, revision is where good writing is made. First drafts are meant to be imperfect. The real work — the careful rereading, the cutting of unnecessary words, the restructuring of muddled paragraphs — happens in the revision process. Treat every draft as an opportunity to discover what you really mean to say.`;
 
 /* ================================================================
-   DOM REFS
+ DOM REFS
 ================================================================ */
-const textInput     = document.getElementById('text-input');
-const charCounter   = document.getElementById('char-counter');
-const btnClear      = document.getElementById('btn-clear');
-const btnCopy       = document.getElementById('btn-copy');
-const btnPaste      = document.getElementById('btn-paste');
-const btnSample     = document.getElementById('btn-sample');
-const optStopwords  = document.getElementById('opt-stopwords');
-const optSpaces     = document.getElementById('opt-spaces');
-const optCharFreq   = document.getElementById('opt-charfreq');
-const optCase       = document.getElementById('opt-case');
-const charFreqSec   = document.getElementById('char-freq-section');
-const hamburger     = document.getElementById('nav-hamburger');
-const navLinks      = document.getElementById('nav-links');
+const textInput = document.getElementById('text-input');
+const charCounter = document.getElementById('char-counter');
+const btnClear = document.getElementById('btn-clear');
+const btnCopy = document.getElementById('btn-copy');
+const btnPaste = document.getElementById('btn-paste');
+const btnSample = document.getElementById('btn-sample');
+const optStopwords = document.getElementById('opt-stopwords');
+const optSpaces = document.getElementById('opt-spaces');
+const optCharFreq = document.getElementById('opt-charfreq');
+const optCase = document.getElementById('opt-case');
+const charFreqSec = document.getElementById('char-freq-section');
+const hamburger = document.getElementById('nav-hamburger');
+const navLinks = document.getElementById('nav-links');
 
 /* Stat elements */
 const S = {
-  words:        document.getElementById('st-words'),
-  chars:        document.getElementById('st-chars'),
-  sentences:    document.getElementById('st-sentences'),
-  paragraphs:   document.getElementById('st-paragraphs'),
-  lines:        document.getElementById('st-lines'),
-  avgWord:      document.getElementById('st-avgword'),
-  uniqueSub:    document.getElementById('st-unique-sub'),
-  charsLabel:   document.getElementById('chars-label'),
-  charsSub:     document.getElementById('chars-sub'),
-  avgSentSub:   document.getElementById('st-avg-sent-sub'),
-  avgParaSub:   document.getElementById('st-avg-para-sub'),
-  spacesSub:    document.getElementById('st-spaces-sub'),
-  timeRead:     document.getElementById('time-read'),
-  timeSpeak:    document.getElementById('time-speak'),
-  richBar:      document.getElementById('richness-bar'),
-  richPct:      document.getElementById('richness-pct'),
-  vocabPill:    document.getElementById('vocab-pill'),
-  keyList:      document.getElementById('keyword-list'),
-  freqList:     document.getElementById('freq-list'),
-  wdLongest:    document.getElementById('wd-longest'),
-  wdShortest:   document.getElementById('wd-shortest'),
-  wdUnique:     document.getElementById('wd-unique'),
-  wdAvgLen:     document.getElementById('wd-avglen'),
-  wdSpaces:     document.getElementById('wd-spaces'),
-  wdNumbers:    document.getElementById('wd-numbers'),
-  charFreqGrid: document.getElementById('char-freq-grid'),
-  charFreqLabel:document.getElementById('char-freq-total-label'),
+ words: document.getElementById('st-words'),
+ chars: document.getElementById('st-chars'),
+ sentences: document.getElementById('st-sentences'),
+ paragraphs: document.getElementById('st-paragraphs'),
+ lines: document.getElementById('st-lines'),
+ avgWord: document.getElementById('st-avgword'),
+ uniqueSub: document.getElementById('st-unique-sub'),
+ charsLabel: document.getElementById('chars-label'),
+ charsSub: document.getElementById('chars-sub'),
+ avgSentSub: document.getElementById('st-avg-sent-sub'),
+ avgParaSub: document.getElementById('st-avg-para-sub'),
+ spacesSub: document.getElementById('st-spaces-sub'),
+ timeRead: document.getElementById('time-read'),
+ timeSpeak: document.getElementById('time-speak'),
+ richBar: document.getElementById('richness-bar'),
+ richPct: document.getElementById('richness-pct'),
+ vocabPill: document.getElementById('vocab-pill'),
+ keyList: document.getElementById('keyword-list'),
+ freqList: document.getElementById('freq-list'),
+ wdLongest: document.getElementById('wd-longest'),
+ wdShortest: document.getElementById('wd-shortest'),
+ wdUnique: document.getElementById('wd-unique'),
+ wdAvgLen: document.getElementById('wd-avglen'),
+ wdSpaces: document.getElementById('wd-spaces'),
+ wdNumbers: document.getElementById('wd-numbers'),
+ charFreqGrid: document.getElementById('char-freq-grid'),
+ charFreqLabel:document.getElementById('char-freq-total-label'),
 };
 
 /* ================================================================
-   STATE
+ STATE
 ================================================================ */
 let debounceTimer = null;
-let lastValues    = {};   // for flash-on-change detection
+let lastValues = {};
 
 /* ================================================================
-   UTILITY: format time duration
+ UTILITY: format time duration
 ================================================================ */
 function fmtTime(seconds) {
-  if (seconds <= 0) return '—';
-  if (seconds < 60) return `${Math.ceil(seconds)}s`;
-  const m = Math.floor(seconds / 60);
-  const s = Math.round(seconds % 60);
-  if (m >= 60) {
-    const h  = Math.floor(m / 60);
-    const rm = m % 60;
-    return rm > 0 ? `${h}h ${rm}m` : `${h}h`;
-  }
-  return s > 0 ? `${m}m ${s}s` : `${m}m`;
+ if (seconds <= 0) return '—';
+ if (seconds < 60) return `${Math.ceil(seconds)}s`;
+ const m = Math.floor(seconds / 60);
+ const s = Math.round(seconds % 60);
+ if (m >= 60) {
+ const h = Math.floor(m / 60);
+ const rm = m % 60;
+ return rm > 0 ? `${h}h ${rm}m` : `${h}h`;
+ }
+ return s > 0 ? `${m}m ${s}s` : `${m}m`;
 }
 
 /* UTILITY: format large numbers with commas */
 function fmtNum(n) {
-  return n.toLocaleString('en-US');
+ return n.toLocaleString('en-US');
 }
 
 /* ================================================================
-   UTILITY: set value with flash animation
+ UTILITY: set value with flash animation
 ================================================================ */
 function setVal(el, val) {
-  const strVal = String(val);
-  if (lastValues[el.id] !== strVal) {
-    lastValues[el.id] = strVal;
-    el.textContent = strVal;
-    el.classList.remove('flash');
-    void el.offsetWidth; // reflow
-    el.classList.add('flash');
-    // remove after animation
-    setTimeout(() => el.classList.remove('flash'), 400);
-  }
+ const strVal = String(val);
+ if (lastValues[el.id] !== strVal) {
+ lastValues[el.id] = strVal;
+ el.textContent = strVal;
+ el.classList.remove('flash');
+ void el.offsetWidth;
+ el.classList.add('flash');
+ setTimeout(() => el.classList.remove('flash'), 400);
+ }
 }
 
 /* ================================================================
-   CORE ANALYSIS FUNCTION
+ CORE ANALYSIS FUNCTION
 ================================================================ */
 function analyzeText(raw) {
-  /* ---- Basic flags ---- */
-  const ignoreCase = optCase.checked;
-  const exclStops  = optStopwords.checked;
+ const ignoreCase = optCase.checked;
+ const exclStops = optStopwords.checked;
 
-  /* ---- Characters ---- */
-  const charsWithSpaces    = raw.length;
-  const charsWithoutSpaces = raw.replace(/\s/g, '').length;
-  const spaceCount         = (raw.match(/[ \t\r\n]/g) || []).length;
+ const charsWithSpaces = raw.length;
+ const charsWithoutSpaces = raw.replace(/\s/g, '').length;
+ const spaceCount = (raw.match(/[ \t\r\n]/g) || []).length;
 
-  /* ---- Lines ---- */
-  const lineCount = raw === '' ? 0 : raw.split('\n').length;
+ const lineCount = raw === '' ? 0 : raw.split('\n').length;
 
-  /* ---- Paragraphs ---- */
-  const paragraphs = raw.trim() === ''
-    ? []
-    : raw.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
-  const paragraphCount = paragraphs.length;
+ const paragraphs = raw.trim() === ''
+ ? []
+ : raw.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+ const paragraphCount = paragraphs.length;
 
-  /* ---- Sentences ---- */
-  // Match sequences ending in . ! ? (handles ellipsis)
-  const sentenceMatches = raw.trim() === ''
-    ? []
-    : raw.match(/[^.!?]*[.!?]+/g) || [];
-  const sentenceCount = sentenceMatches.filter(s => s.trim().length > 0).length;
+ const sentenceMatches = raw.trim() === ''
+ ? []
+ : raw.match(/[^.!?]*[.!?]+/g) || [];
+ const sentenceCount = sentenceMatches.filter(s => s.trim().length > 0).length;
 
-  /* ---- Words ---- */
-  // Extract words: sequences of letters, digits, apostrophes
-  const wordTokens = raw.match(/\b[\w']+\b/g) || [];
-  const wordCount  = wordTokens.length;
+ const wordTokens = raw.match(/\b[\w']+\b/g) || [];
+ const wordCount = wordTokens.length;
 
-  /* ---- Normalise for analysis ---- */
-  const normalWords = wordTokens.map(w => ignoreCase ? w.toLowerCase() : w);
+ const normalWords = wordTokens.map(w => ignoreCase ? w.toLowerCase() : w);
 
-  /* ---- Unique words ---- */
-  const uniqueSet   = new Set(normalWords);
-  const uniqueCount = uniqueSet.size;
+ const uniqueSet = new Set(normalWords);
+ const uniqueCount = uniqueSet.size;
 
-  /* ---- Avg word length ---- */
-  const totalWordChars = wordTokens.reduce((acc, w) => acc + w.replace(/[^a-zA-Z]/g, '').length, 0);
-  const avgWordLength  = wordCount > 0 ? (totalWordChars / wordCount) : 0;
+ const totalWordChars = wordTokens.reduce((acc, w) => acc + w.replace(/[^a-zA-Z]/g, '').length, 0);
+ const avgWordLength = wordCount > 0 ? (totalWordChars / wordCount) : 0;
 
-  /* ---- Numbers in text ---- */
-  const numberTokens = raw.match(/\b\d+(\.\d+)?\b/g) || [];
-  const numberCount  = numberTokens.length;
+ const numberTokens = raw.match(/\b\d+(\.\d+)?\b/g) || [];
+ const numberCount = numberTokens.length;
 
-  /* ---- Longest / shortest words ---- */
-  let longestWord  = '';
-  let shortestWord = '';
-  if (wordTokens.length > 0) {
-    const pureWords = wordTokens.filter(w => /^[a-zA-Z]+$/.test(w));
-    if (pureWords.length > 0) {
-      longestWord  = pureWords.reduce((a, b) => b.length > a.length ? b : a, '');
-      shortestWord = pureWords.reduce((a, b) => b.length < a.length ? b : a, pureWords[0]);
-    }
-  }
+ let longestWord = '';
+ let shortestWord = '';
+ if (wordTokens.length > 0) {
+ const pureWords = wordTokens.filter(w => /^[a-zA-Z]+$/.test(w));
+ if (pureWords.length > 0) {
+ longestWord = pureWords.reduce((a, b) => b.length > a.length ? b : a, '');
+ shortestWord = pureWords.reduce((a, b) => b.length < a.length ? b : a, pureWords[0]);
+ }
+ }
 
-  /* ---- Word frequency map ---- */
-  const freqMap = {};
-  for (const w of normalWords) {
-    freqMap[w] = (freqMap[w] || 0) + 1;
-  }
+ const freqMap = {};
+ for (const w of normalWords) {
+ freqMap[w] = (freqMap[w] || 0) + 1;
+ }
 
-  /* ---- All words sorted by frequency ---- */
-  const allWordsSorted = Object.entries(freqMap).sort((a, b) => b[1] - a[1]);
+ const allWordsSorted = Object.entries(freqMap).sort((a, b) => b[1] - a[1]);
 
-  /* ---- Keyword density (optional stop-word exclusion) ---- */
-  const filtered = exclStops
-    ? allWordsSorted.filter(([w]) => !STOP_WORDS.has(w.toLowerCase()) && /^[a-zA-Z]/.test(w))
-    : allWordsSorted.filter(([w]) => /^[a-zA-Z]/.test(w));
-  const keywords  = filtered.slice(0, 5);
-  const topWords  = allWordsSorted.filter(([w]) => /^[a-zA-Z]/.test(w)).slice(0, 10);
+ const filtered = exclStops
+ ? allWordsSorted.filter(([w]) => !STOP_WORDS.has(w.toLowerCase()) && /^[a-zA-Z]/.test(w))
+ : allWordsSorted.filter(([w]) => /^[a-zA-Z]/.test(w));
+ const keywords = filtered.slice(0, 5);
+ const topWords = allWordsSorted.filter(([w]) => /^[a-zA-Z]/.test(w)).slice(0, 10);
 
-  /* ---- Reading / speaking time ---- */
-  const readSec  = wordCount > 0 ? (wordCount / 200) * 60 : 0;
-  const speakSec = wordCount > 0 ? (wordCount / 130) * 60 : 0;
+ const readSec = wordCount > 0 ? (wordCount / 200) * 60 : 0;
+ const speakSec = wordCount > 0 ? (wordCount / 130) * 60 : 0;
 
-  /* ---- Vocabulary richness (TTR) ---- */
-  const ttr = wordCount > 0 ? (uniqueCount / wordCount) : 0;
+ const ttr = wordCount > 0 ? (uniqueCount / wordCount) : 0;
 
-  /* ---- Avg words per sentence / paragraph ---- */
-  const avgWordsPerSentence  = sentenceCount  > 0 ? (wordCount / sentenceCount)  : 0;
-  const avgWordsPerParagraph = paragraphCount > 0 ? (wordCount / paragraphCount) : 0;
+ const avgWordsPerSentence = sentenceCount > 0 ? (wordCount / sentenceCount) : 0;
+ const avgWordsPerParagraph = paragraphCount > 0 ? (wordCount / paragraphCount) : 0;
 
-  /* ---- Character frequency ---- */
-  const charFreq = {};
-  for (const ch of raw.replace(/\s/g, '').toLowerCase()) {
-    if (/[a-z]/.test(ch)) charFreq[ch] = (charFreq[ch] || 0) + 1;
-  }
-  const charFreqSorted = Object.entries(charFreq).sort((a, b) => b[1] - a[1]).slice(0, 18);
+ const charFreq = {};
+ for (const ch of raw.replace(/\s/g, '').toLowerCase()) {
+ if (/[a-z]/.test(ch)) charFreq[ch] = (charFreq[ch] || 0) + 1;
+ }
+ const charFreqSorted = Object.entries(charFreq).sort((a, b) => b[1] - a[1]).slice(0, 18);
 
-  return {
-    charsWithSpaces, charsWithoutSpaces, spaceCount,
-    lineCount, paragraphCount, sentenceCount,
-    wordCount, uniqueCount, avgWordLength, numberCount,
-    longestWord, shortestWord,
-    freqMap, keywords, topWords,
-    readSec, speakSec, ttr,
-    avgWordsPerSentence, avgWordsPerParagraph,
-    charFreqSorted,
-  };
+ return {
+ charsWithSpaces, charsWithoutSpaces, spaceCount,
+ lineCount, paragraphCount, sentenceCount,
+ wordCount, uniqueCount, avgWordLength, numberCount,
+ longestWord, shortestWord,
+ freqMap, keywords, topWords,
+ readSec, speakSec, ttr,
+ avgWordsPerSentence, avgWordsPerParagraph,
+ charFreqSorted,
+ };
 }
 
 /* ================================================================
-   UPDATE UI
+ UPDATE UI
 ================================================================ */
 function updateUI(r, raw) {
-  /* --- Character counter in textarea --- */
-  charCounter.textContent = `${fmtNum(r.charsWithSpaces)} chars`;
+ charCounter.textContent = `${fmtNum(r.charsWithSpaces)} chars`;
 
-  /* --- Chars toggle (with/without spaces) --- */
-  const showWithSpaces = !optSpaces.checked;
-  setVal(S.chars, fmtNum(showWithSpaces ? r.charsWithSpaces : r.charsWithoutSpaces));
-  S.charsLabel.textContent = showWithSpaces ? 'Characters' : 'Chars (no sp.)';
-  S.charsSub.textContent   = showWithSpaces ? 'incl. spaces' : 'excl. spaces';
+ const showWithSpaces = !optSpaces.checked;
+ setVal(S.chars, fmtNum(showWithSpaces ? r.charsWithSpaces : r.charsWithoutSpaces));
+ S.charsLabel.textContent = showWithSpaces ? 'Characters' : 'Chars (no sp.)';
+ S.charsSub.textContent = showWithSpaces ? 'incl. spaces' : 'excl. spaces';
 
-  /* --- Core stats --- */
-  setVal(S.words,      fmtNum(r.wordCount));
-  setVal(S.sentences,  fmtNum(r.sentenceCount));
-  setVal(S.paragraphs, fmtNum(r.paragraphCount));
-  setVal(S.lines,      fmtNum(r.lineCount));
-  setVal(S.avgWord,    r.wordCount > 0 ? r.avgWordLength.toFixed(1) : '0');
+ setVal(S.words, fmtNum(r.wordCount));
+ setVal(S.sentences, fmtNum(r.sentenceCount));
+ setVal(S.paragraphs, fmtNum(r.paragraphCount));
+ setVal(S.lines, fmtNum(r.lineCount));
+ setVal(S.avgWord, r.wordCount > 0 ? r.avgWordLength.toFixed(1) : '0');
 
-  /* Sub-labels */
-  S.uniqueSub.textContent  = `${fmtNum(r.uniqueCount)} unique`;
-  S.avgSentSub.textContent = r.sentenceCount > 0
-    ? `${r.avgWordsPerSentence.toFixed(1)} avg words`
-    : '0 avg words';
-  S.avgParaSub.textContent = r.paragraphCount > 0
-    ? `${r.avgWordsPerParagraph.toFixed(0)} avg words`
-    : '0 avg words';
-  S.spacesSub.textContent  = `${fmtNum(r.spaceCount)} spaces`;
+ S.uniqueSub.textContent = `${fmtNum(r.uniqueCount)} unique`;
+ S.avgSentSub.textContent = r.sentenceCount > 0
+ ? `${r.avgWordsPerSentence.toFixed(1)} avg words`
+ : '0 avg words';
+ S.avgParaSub.textContent = r.paragraphCount > 0
+ ? `${r.avgWordsPerParagraph.toFixed(0)} avg words`
+ : '0 avg words';
+ S.spacesSub.textContent = `${fmtNum(r.spaceCount)} spaces`;
 
-  /* --- Time estimates --- */
-  S.timeRead.textContent  = fmtTime(r.readSec);
-  S.timeSpeak.textContent = fmtTime(r.speakSec);
+ S.timeRead.textContent = fmtTime(r.readSec);
+ S.timeSpeak.textContent = fmtTime(r.speakSec);
 
-  /* --- Vocabulary richness --- */
-  const richPct = Math.round(r.ttr * 100);
-  S.richBar.style.width   = `${richPct}%`;
-  S.richPct.textContent   = r.wordCount > 0 ? `${richPct}%` : '—';
+ const richPct = Math.round(r.ttr * 100);
+ S.richBar.style.width = `${richPct}%`;
+ S.richPct.textContent = r.wordCount > 0 ? `${richPct}%` : '—';
 
-  /* Vocab pill */
-  const pill = S.vocabPill;
-  pill.className = 'score-pill';
-  if (r.wordCount === 0)   { pill.classList.add('pill-empty'); pill.textContent = '—'; }
-  else if (richPct >= 65)  { pill.classList.add('pill-good');  pill.textContent = '✦ Rich Vocab'; }
-  else if (richPct >= 40)  { pill.classList.add('pill-avg');   pill.textContent = '◆ Avg Vocab'; }
-  else                     { pill.classList.add('pill-low');   pill.textContent = '▼ Repetitive'; }
+ const pill = S.vocabPill;
+ pill.className = 'score-pill';
+ if (r.wordCount === 0) { pill.classList.add('pill-empty'); pill.textContent = '—'; }
+ else if (richPct >= 65) { pill.classList.add('pill-good'); pill.textContent = '✦ Rich Vocab'; }
+ else if (richPct >= 40) { pill.classList.add('pill-avg'); pill.textContent = '◆ Avg Vocab'; }
+ else { pill.classList.add('pill-low'); pill.textContent = '▼ Repetitive'; }
 
-  /* --- Word details (sidebar) --- */
-  S.wdLongest.innerHTML  = r.longestWord  ? `<em>${escHtml(r.longestWord)}</em>`  : '—';
-  S.wdShortest.innerHTML = r.shortestWord ? `<em>${escHtml(r.shortestWord)}</em>` : '—';
-  S.wdUnique.textContent = r.wordCount > 0 ? `${fmtNum(r.uniqueCount)} / ${fmtNum(r.wordCount)}` : '—';
-  S.wdAvgLen.textContent = r.wordCount > 0 ? `${r.avgWordLength.toFixed(2)} chars` : '—';
-  S.wdSpaces.textContent = fmtNum(r.spaceCount);
-  S.wdNumbers.textContent= r.numberCount > 0 ? fmtNum(r.numberCount) : '0';
+ S.wdLongest.innerHTML = r.longestWord ? `<em>${escHtml(r.longestWord)}</em>` : '—';
+ S.wdShortest.innerHTML = r.shortestWord ? `<em>${escHtml(r.shortestWord)}</em>` : '—';
+ S.wdUnique.textContent = r.wordCount > 0 ? `${fmtNum(r.uniqueCount)} / ${fmtNum(r.wordCount)}` : '—';
+ S.wdAvgLen.textContent = r.wordCount > 0 ? `${r.avgWordLength.toFixed(2)} chars` : '—';
+ S.wdSpaces.textContent = fmtNum(r.spaceCount);
+ S.wdNumbers.textContent = r.numberCount > 0 ? fmtNum(r.numberCount) : '0';
 
-  /* --- Keywords --- */
-  renderKeywords(r.keywords, r.wordCount);
+ renderKeywords(r.keywords, r.wordCount);
+ renderFreqList(r.topWords, r.wordCount);
 
-  /* --- Frequent words list --- */
-  renderFreqList(r.topWords, r.wordCount);
-
-  /* --- Char frequency --- */
-  if (optCharFreq.checked) {
-    charFreqSec.classList.add('visible');
-    renderCharFreq(r.charFreqSorted, r.charsWithoutSpaces);
-  } else {
-    charFreqSec.classList.remove('visible');
-  }
+ if (optCharFreq.checked) {
+ charFreqSec.classList.add('visible');
+ renderCharFreq(r.charFreqSorted, r.charsWithoutSpaces);
+ } else {
+ charFreqSec.classList.remove('visible');
+ }
 }
 
 /* ================================================================
-   RENDER: Keyword Density
+ RENDER: Keyword Density
 ================================================================ */
 function renderKeywords(keywords, totalWords) {
-  if (!keywords.length) {
-    S.keyList.innerHTML = '<p class="kw-empty">Start typing to see keyword density…</p>';
-    return;
-  }
-
-  const maxCount = keywords[0][1];
-  S.keyList.innerHTML = keywords.map(([word, count], i) => {
-    const pct    = totalWords > 0 ? ((count / totalWords) * 100) : 0;
-    const barPct = maxCount  > 0  ? ((count / maxCount)  * 100) : 0;
-    const rankLabels = ['🥇','🥈','🥉','4','5'];
-    return `
-      <div class="keyword-item" role="listitem">
-        <div class="keyword-row">
-          <span class="keyword-word">${escHtml(word)}</span>
-          <div class="keyword-meta">
-            <span class="keyword-count">${count}×</span>
-            <span class="keyword-pct">${pct.toFixed(2)}%</span>
-          </div>
-        </div>
-        <div class="kw-bar" title="${pct.toFixed(2)}% density">
-          <div class="kw-bar-fill" style="width:${barPct.toFixed(1)}%"></div>
-        </div>
-      </div>`;
-  }).join('');
+ if (!keywords.length) {
+ S.keyList.innerHTML = '<p class="kw-empty">Start typing to see keyword density…</p>';
+ return;
+ }
+ const maxCount = keywords[0][1];
+ S.keyList.innerHTML = keywords.map(([word, count], i) => {
+ const pct = totalWords > 0 ? ((count / totalWords) * 100) : 0;
+ const barPct = maxCount > 0 ? ((count / maxCount) * 100) : 0;
+ return `
+ <div class="keyword-item" role="listitem">
+ <div class="keyword-row">
+ <span class="keyword-word">${escHtml(word)}</span>
+ <div class="keyword-meta">
+ <span class="keyword-count">${count}×</span>
+ <span class="keyword-pct">${pct.toFixed(2)}%</span>
+ </div>
+ </div>
+ <div class="kw-bar" title="${pct.toFixed(2)}% density">
+ <div class="kw-bar-fill" style="width:${barPct.toFixed(1)}%"></div>
+ </div>
+ </div>`;
+ }).join('');
 }
 
 /* ================================================================
-   RENDER: Most Frequent Words
+ RENDER: Most Frequent Words
 ================================================================ */
 function renderFreqList(topWords, totalWords) {
-  if (!topWords.length) {
-    S.freqList.innerHTML = '<p class="kw-empty" style="padding:.75rem 0 .5rem;">No data yet…</p>';
-    return;
-  }
-
-  const maxCount = topWords[0][1];
-  S.freqList.innerHTML = topWords.map(([word, count], i) => {
-    const barPct   = maxCount > 0 ? ((count / maxCount) * 100) : 0;
-    const rankClass= i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-    return `
-      <div class="freq-item" role="listitem">
-        <span class="freq-rank ${rankClass}">${i + 1}</span>
-        <span class="freq-word">${escHtml(word)}</span>
-        <div class="freq-bar-wrap">
-          <div class="freq-bar-fill" style="width:${barPct.toFixed(1)}%"></div>
-        </div>
-        <span class="freq-count">${count}</span>
-      </div>`;
-  }).join('');
+ if (!topWords.length) {
+ S.freqList.innerHTML = '<p class="kw-empty" style="padding:.75rem 0 .5rem;">No data yet…</p>';
+ return;
+ }
+ const maxCount = topWords[0][1];
+ S.freqList.innerHTML = topWords.map(([word, count], i) => {
+ const barPct = maxCount > 0 ? ((count / maxCount) * 100) : 0;
+ const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+ return `
+ <div class="freq-item" role="listitem">
+ <span class="freq-rank ${rankClass}">${i + 1}</span>
+ <span class="freq-word">${escHtml(word)}</span>
+ <div class="freq-bar-wrap">
+ <div class="freq-bar-fill" style="width:${barPct.toFixed(1)}%"></div>
+ </div>
+ <span class="freq-count">${count}</span>
+ </div>`;
+ }).join('');
 }
 
 /* ================================================================
-   RENDER: Character Frequency
+ RENDER: Character Frequency
 ================================================================ */
 function renderCharFreq(sorted, totalNonSpace) {
-  if (!sorted.length) {
-    S.charFreqGrid.innerHTML = '';
-    S.charFreqLabel.textContent = '—';
-    return;
-  }
-
-  S.charFreqLabel.textContent = `${sorted.length} unique`;
-  const maxCount = sorted[0][1];
-
-  S.charFreqGrid.innerHTML = sorted.map(([ch, count]) => {
-    const barPct = maxCount > 0 ? ((count / maxCount) * 100) : 0;
-    const pct    = totalNonSpace > 0 ? ((count / totalNonSpace) * 100).toFixed(1) : 0;
-    return `
-      <div class="char-freq-cell" title="${ch.toUpperCase()} — ${count} times (${pct}%)">
-        <div class="cfc-char">${escHtml(ch.toUpperCase())}</div>
-        <div class="cfc-count">${count}</div>
-        <div class="cfc-bar"><div class="cfc-bar-fill" style="width:${barPct.toFixed(0)}%"></div></div>
-      </div>`;
-  }).join('');
+ if (!sorted.length) {
+ S.charFreqGrid.innerHTML = '';
+ S.charFreqLabel.textContent = '—';
+ return;
+ }
+ S.charFreqLabel.textContent = `${sorted.length} unique`;
+ const maxCount = sorted[0][1];
+ S.charFreqGrid.innerHTML = sorted.map(([ch, count]) => {
+ const barPct = maxCount > 0 ? ((count / maxCount) * 100) : 0;
+ const pct = totalNonSpace > 0 ? ((count / totalNonSpace) * 100).toFixed(1) : 0;
+ return `
+ <div class="char-freq-cell" title="${ch.toUpperCase()} — ${count} times (${pct}%)">
+ <div class="cfc-char">${escHtml(ch.toUpperCase())}</div>
+ <div class="cfc-count">${count}</div>
+ <div class="cfc-bar"><div class="cfc-bar-fill" style="width:${barPct.toFixed(0)}%"></div></div>
+ </div>`;
+ }).join('');
 }
 
 /* ================================================================
-   HTML ESCAPE
+ HTML ESCAPE
 ================================================================ */
 function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+ return String(str)
+ .replace(/&/g, '&amp;')
+ .replace(/</g, '&lt;')
+ .replace(/>/g, '&gt;')
+ .replace(/"/g, '&quot;')
+ .replace(/'/g, '&#39;');
 }
 
 /* ================================================================
-   MAIN INPUT HANDLER  (debounced ~120ms)
+ MAIN INPUT HANDLER (debounced ~120ms)
 ================================================================ */
 function onInput() {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    const raw    = textInput.value;
-    const result = analyzeText(raw);
-    updateUI(result, raw);
-  }, 120);
+ clearTimeout(debounceTimer);
+ debounceTimer = setTimeout(() => {
+ const raw = textInput.value;
+ const result = analyzeText(raw);
+ updateUI(result, raw);
+ }, 120);
 }
 
 textInput.addEventListener('input', onInput);
 
-/* Re-run on option changes */
 [optStopwords, optSpaces, optCharFreq, optCase].forEach(el => {
-  el.addEventListener('change', onInput);
+ el.addEventListener('change', onInput);
 });
 
 /* ================================================================
-   BUTTONS
+ BUTTONS
 ================================================================ */
-
-/* Clear */
 btnClear.addEventListener('click', () => {
-  textInput.value = '';
-  textInput.focus();
-  onInput();
-  showToast('Text cleared.');
+ textInput.value = '';
+ textInput.focus();
+ onInput();
+ showToast('Text cleared.');
 });
 
-/* Copy */
 btnCopy.addEventListener('click', async () => {
-  const text = textInput.value.trim();
-  if (!text) { showToast('Nothing to copy.'); return; }
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast('Copied to clipboard ✓');
-  } catch {
-    textInput.select();
-    document.execCommand('copy');
-    showToast('Copied ✓');
-  }
+ const text = textInput.value.trim();
+ if (!text) { showToast('Nothing to copy.'); return; }
+ try {
+ await navigator.clipboard.writeText(text);
+ showToast('Copied to clipboard ✓');
+ } catch {
+ textInput.select();
+ document.execCommand('copy');
+ showToast('Copied ✓');
+ }
 });
 
-/* Paste */
 btnPaste.addEventListener('click', async () => {
-  try {
-    const text = await navigator.clipboard.readText();
-    if (!text) { showToast('Clipboard is empty.'); return; }
-    textInput.value = text;
-    onInput();
-    showToast('Pasted from clipboard ✓');
-  } catch {
-    showToast('Clipboard access denied. Please paste manually (Ctrl+V).');
-  }
+ try {
+ const text = await navigator.clipboard.readText();
+ if (!text) { showToast('Clipboard is empty.'); return; }
+ textInput.value = text;
+ onInput();
+ showToast('Pasted from clipboard ✓');
+ } catch {
+ showToast('Clipboard access denied. Please paste manually (Ctrl+V).');
+ }
 });
 
-/* Sample text */
 btnSample.addEventListener('click', () => {
-  textInput.value = SAMPLE_TEXT;
-  onInput();
-  textInput.scrollTop = 0;
-  showToast('Sample text loaded ✓');
+ textInput.value = SAMPLE_TEXT;
+ onInput();
+ textInput.scrollTop = 0;
+ showToast('Sample text loaded ✓');
 });
 
 /* ================================================================
-   HAMBURGER MENU
+ HAMBURGER MENU
 ================================================================ */
 hamburger.addEventListener('click', () => {
-  const isOpen = navLinks.classList.toggle('open');
-  hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+ const isOpen = navLinks.classList.toggle('open');
+ hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
 });
 
-/* Close nav on outside click */
 document.addEventListener('click', (e) => {
-  if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
-    navLinks.classList.remove('open');
-    hamburger.setAttribute('aria-expanded', 'false');
-  }
+ if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+ navLinks.classList.remove('open');
+ hamburger.setAttribute('aria-expanded', 'false');
+ }
 });
 
 /* ================================================================
-   TOAST
+ TOAST
 ================================================================ */
 const toastContainer = document.getElementById('toast-container');
 let toastTimeout;
 
 function showToast(message, duration = 2600) {
-  clearTimeout(toastTimeout);
-  // Remove existing toasts
-  toastContainer.querySelectorAll('.toast').forEach(t => t.remove());
-
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = message;
-  toastContainer.appendChild(t);
-
-  // Animate in
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => t.classList.add('show'));
-  });
-
-  toastTimeout = setTimeout(() => {
-    t.classList.remove('show');
-    setTimeout(() => t.remove(), 300);
-  }, duration);
+ clearTimeout(toastTimeout);
+ toastContainer.querySelectorAll('.toast').forEach(t => t.remove());
+ const t = document.createElement('div');
+ t.className = 'toast';
+ t.textContent = message;
+ toastContainer.appendChild(t);
+ requestAnimationFrame(() => {
+ requestAnimationFrame(() => t.classList.add('show'));
+ });
+ toastTimeout = setTimeout(() => {
+ t.classList.remove('show');
+ setTimeout(() => t.remove(), 300);
+ }, duration);
 }
 
 /* ================================================================
-   KEYBOARD SHORTCUT: Ctrl/Cmd+Shift+D → clear
+ KEYBOARD SHORTCUT: Ctrl/Cmd+Shift+D → clear
 ================================================================ */
 document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
-    e.preventDefault();
-    btnClear.click();
-  }
+ if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
+ e.preventDefault();
+ btnClear.click();
+ }
 });
 
 /* ================================================================
-   INIT
+ INIT
 ================================================================ */
-// Run once on load to set zero-state
 onInput();
-
-// Announce tool ready
 console.log('%cResearchToolsLab — Word & Text Analyzer loaded ✓', 'color:#c8441a;font-weight:bold;font-size:13px;');
 </script>
 </body>
