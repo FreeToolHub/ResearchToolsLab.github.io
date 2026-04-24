@@ -95,24 +95,29 @@ body {
 .nav-logo-box {
  width: 34px;
  height: 34px;
- background: var(--rust);
- border-radius: 8px;
+ background: var(--ink);
+ border-radius: var(--r-sm);
  display: flex;
  align-items: center;
  justify-content: center;
  font-family: var(--serif);
- font-weight: 700;
- font-size: 1rem;
- color: #fff;
- letter-spacing: -.5px;
+ font-weight: 900;
+ font-size: 1.05rem;
+ color: var(--cream);
+ letter-spacing: -.05em;
 }
 .nav-logo-name {
  font-family: var(--serif);
- font-size: 1.05rem;
- font-weight: 600;
+ font-size: 1.15rem;
+ font-weight: 700;
  color: var(--ink);
- letter-spacing: -.3px;
+ letter-spacing: -.03em;
 }
+.nav-logo-name em {
+ color: var(--rust);
+ font-style: normal;
+}
+
 /* Nav links */
 .nav-links {
  display: flex;
@@ -960,20 +965,29 @@ footer {
  margin-bottom: .9rem;
 }
 .footer-logo-box {
- width: 28px; height: 28px;
- background: var(--rust);
- border-radius: 7px;
- display: flex; align-items: center; justify-content: center;
+ width: 34px;
+ height: 34px;
+ background: var(--ink);
+ border-radius: var(--r-sm);
+ display: flex;
+ align-items: center;
+ justify-content: center;
  font-family: var(--serif);
- font-size: .85rem;
- font-weight: 700;
- color: #fff;
+ font-weight: 900;
+ font-size: 1.05rem;
+ color: var(--cream);
+ letter-spacing: -.05em;
 }
 .footer-logo-name {
  font-family: var(--serif);
- font-size: .95rem;
- font-weight: 600;
- color: var(--ink2);
+ font-size: 1.15rem;
+ font-weight: 700;
+ color: var(--ink);
+ letter-spacing: -.03em;
+}
+.footer-logo-name em {
+ color: var(--rust);
+ font-style: normal;
 }
 .footer-links {
  display: flex;
@@ -1173,8 +1187,8 @@ footer {
  <div class="navbar-inner">
  <a href="index.html" class="nav-logo" aria-label="ResearchToolsLab home">
  <div class="nav-logo-box" aria-hidden="true">R</div>
- <span class="nav-logo-name">ResearchToolsLab</span>
- </a>
+ <span class="nav-logo-name">Research<em>Tools</em>Lab</span>
+</a>
  <ul class="nav-links" id="nav-links" role="list">
  <li><a href="index.html">Home</a></li>
  <li><a href="citation.html">Citation Tools</a></li>
@@ -1585,10 +1599,10 @@ footer {
 ============================================================ -->
 <footer role="contentinfo">
  <div class="footer-inner">
- <div class="footer-logo">
+<div class="footer-logo">
  <div class="footer-logo-box" aria-hidden="true">R</div>
- <span class="footer-logo-name">ResearchToolsLab</span>
- </div>
+ <span class="footer-logo-name">ResearchTools<em>Lab</em></span>
+</div>
  
  <ul class="footer-links" role="list">
  <li><a href="index.html">Home</a></li>
