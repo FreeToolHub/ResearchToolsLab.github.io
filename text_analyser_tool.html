@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Word & Text Analyzer — ResearchToolsLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ================================================================
+   DESIGN TOKENS
+================================================================ */
+:root {
+  --cream:   #f5f0e8;
+  --cream2:  #ede7d9;
+  --cream3:  #e4ddd0;
+  --white:   #fff;
+
+  --ink:     #1a1612;
+  --ink2:    #3d3530;
+  --ink3:    #7a6f65;
+  --ink4:    #b0a89e;
+
+  --rust:    #c8441a;
+  --rust2:   #e05228;
+  --rust-l:  rgba(200,68,26,.08);
+
+  --teal:    #1a7a6e;
+  --teal2:   #15685e;
+  --teal-l:  rgba(26,122,110,.08);
+
+  --blue:    #2563eb;
+  --blue-l:  rgba(37,99,235,.08);
+
+  --gold:    #b07d2b;
+  --gold-l:  rgba(176,125,43,.08);
+
+  --border:  rgba(26,22,18,.10);
+  --border2: rgba(26,22,18,.16);
+
+  --shadow-sm: 0 2px 12px rgba(26,22,18,.07);
+  --shadow-md: 0 8px 40px rgba(26,22,18,.12);
+  --shadow-lg: 0 20px 60px rgba(26,22,18,.16);
+
+  --serif: 'Fraunces', Georgia, serif;
+  --sans:  'DM Sans', sans-serif;
+  --mono:  'DM Mono', monospace;
+
+  --r-sm:  8px;
+  --r-md:  14px;
+  --r-lg:  20px;
+  --r-xl:  28px;
+}
+
+/* ================================================================
+   RESET & BASE
+================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--rust-l); color: var(--rust); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream2); }
+::-webkit-scrollbar-thumb { background: var(--cream3); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ink4); }
+
+/* ================================================================
+   NAVBAR
+================================================================ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+}
+
+.navbar-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+  gap: 1.5rem;
+}
+
+/* Logo */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-logo-box {
+  width: 34px;
+  height: 34px;
+  background: var(--rust);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  letter-spacing: -.5px;
+}
+
+.nav-logo-name {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -.3px;
+}
+
+/* Nav links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--sans);
+  font-size: .86rem;
+  font-weight: 500;
+  color: var(--ink3);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  transition: color .18s, background .18s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--ink);
+  background: var(--cream);
+}
+
+.nav-links a.active { color: var(--rust); font-weight: 600; }
+
+.nav-cta {
+  flex-shrink: 0;
+}
+
+/* Hamburger */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--r-sm);
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--ink2);
+  border-radius: 99px;
+  transition: all .2s;
+}
+
+/* ================================================================
+   BUTTONS
+================================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--sans);
+  font-size: .875rem;
+  font-weight: 600;
+  border-radius: var(--r-sm);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  padding: 9px 20px;
+  text-decoration: none;
+  transition: transform .18s, box-shadow .18s, background .18s, color .18s, border-color .18s;
+  line-height: 1;
+  white-space: nowrap;
+}
+.btn:focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+
+/* Primary — rust */
+.btn-gen {
+  background: var(--rust);
+  color: #fff;
+  border-color: var(--rust);
+}
+.btn-gen:hover {
+  background: var(--rust2);
+  border-color: var(--rust2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(200,68,26,.28);
+}
+.btn-gen:active { transform: translateY(0); box-shadow: none; }
+
+/* Secondary */
+.btn-sec {
+  background: var(--white);
+  color: var(--ink2);
+  border-color: var(--border2);
+}
+.btn-sec:hover {
+  background: var(--cream);
+  border-color: rgba(26,22,18,.28);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Ghost / small */
+.btn-ghost {
+  background: transparent;
+  color: var(--ink3);
+  border-color: var(--border);
+  padding: 7px 14px;
+  font-size: .82rem;
+}
+.btn-ghost:hover { background: var(--cream); color: var(--ink); border-color: var(--border2); }
+
+/* Teal */
+.btn-teal {
+  background: var(--teal);
+  color: #fff;
+  border-color: var(--teal);
+}
+.btn-teal:hover {
+  background: var(--teal2);
+  border-color: var(--teal2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26,122,110,.25);
+}
+
+/* Icon-only small */
+.btn-icon {
+  padding: 8px 10px;
+  gap: 0;
+}
+
+/* ================================================================
+   PAGE HEADER
+================================================================ */
+.page-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 3.5rem 2rem 3rem;
+  text-align: center;
+}
+
+.page-header-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--ink4);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 1.25rem;
+}
+.breadcrumb a { color: inherit; text-decoration: none; }
+.breadcrumb a:hover { color: var(--rust); }
+.breadcrumb .sep { color: var(--border2); }
+
+/* H1 */
+.page-header h1 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 5vw, 2.85rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.18;
+  letter-spacing: -.5px;
+  margin-bottom: .85rem;
+}
+
+.page-header h1 em {
+  font-style: italic;
+  color: var(--rust);
+}
+
+.page-header .subtitle {
+  font-size: 1.05rem;
+  color: var(--ink3);
+  max-width: 560px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.65;
+}
+
+/* Badge pills row */
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 99px;
+  letter-spacing: .3px;
+}
+
+.badge-teal  { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(26,122,110,.18); }
+.badge-rust  { background: var(--rust-l); color: var(--rust); border: 1px solid rgba(200,68,26,.18); }
+.badge-blue  { background: var(--blue-l); color: var(--blue); border: 1px solid rgba(37,99,235,.18); }
+.badge-gold  { background: var(--gold-l); color: var(--gold); border: 1px solid rgba(176,125,43,.18); }
+.badge-ink   { background: rgba(26,22,18,.05); color: var(--ink3); border: 1px solid var(--border); }
+
+/* ================================================================
+   MAIN LAYOUT
+================================================================ */
+.main-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+/* ================================================================
+   TOOL CARD
+================================================================ */
+.tool-card {
+  background: var(--white);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Gradient top border */
+.tool-card::before {
+  content: '';
+  display: block;
+  height: 4px;
+  background: linear-gradient(90deg, var(--rust) 0%, #e8854a 40%, var(--teal) 100%);
+}
+
+.tool-inner {
+  padding: 2rem;
+}
+
+/* ================================================================
+   INPUT SECTION
+================================================================ */
+.input-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .6rem;
+}
+
+.input-label-text {
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-weight: 500;
+  color: var(--ink4);
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+}
+
+.input-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.textarea-wrap {
+  position: relative;
+}
+
+#text-input {
+  width: 100%;
+  min-height: 240px;
+  max-height: 520px;
+  resize: vertical;
+  font-family: var(--sans);
+  font-size: .95rem;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--cream);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.25rem;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+  caret-color: var(--rust);
+  display: block;
+}
+
+#text-input::placeholder {
+  color: var(--ink4);
+  font-style: italic;
+}
+
+#text-input:focus {
+  border-color: var(--rust);
+  box-shadow: 0 0 0 4px var(--rust-l), var(--shadow-sm);
+  background: var(--white);
+}
+
+/* Char counter inside textarea wrapper */
+.char-counter {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  font-family: var(--mono);
+  font-size: .68rem;
+  color: var(--ink4);
+  pointer-events: none;
+  background: var(--cream);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ================================================================
+   TOGGLE OPTIONS
+================================================================ */
+.options-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-wrap input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--ink3);
+  padding: 5px 11px 5px 8px;
+  border-radius: 99px;
+  border: 1.5px solid var(--border2);
+  background: var(--cream);
+  transition: all .18s;
+  letter-spacing: .2px;
+}
+
+.toggle-chip .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  background: var(--white);
+  transition: all .18s;
+  flex-shrink: 0;
+}
+
+.toggle-wrap input:checked + .toggle-chip {
+  background: var(--teal-l);
+  border-color: rgba(26,122,110,.28);
+  color: var(--teal);
+}
+
+.toggle-wrap input:checked + .toggle-chip .dot {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+/* ================================================================
+   DIVIDER
+================================================================ */
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.75rem 0;
+}
+
+/* ================================================================
+   QUICK STATS GRID (primary 6-box grid)
+================================================================ */
+.quick-stats-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.section-label {
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-weight: 500;
+  color: var(--ink4);
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+/* Individual stat box */
+.stat-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: transform .15s, box-shadow .15s;
+  cursor: default;
+}
+
+.stat-box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-box .s-label {
+  font-family: var(--mono);
+  font-size: .66rem;
+  font-weight: 500;
+  color: var(--ink4);
+  text-transform: uppercase;
+  letter-spacing: .9px;
+  line-height: 1;
+}
+
+.stat-box .s-value {
+  font-family: var(--serif);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+  letter-spacing: -.5px;
+  transition: color .25s;
+}
+
+.stat-box .s-value.updated {
+  color: var(--rust);
+}
+
+.stat-box .s-sub {
+  font-size: .73rem;
+  color: var(--ink4);
+  font-family: var(--mono);
+  margin-top: 1px;
+}
+
+/* Accent top-border variants */
+.stat-box.accent-rust  { border-top: 2.5px solid var(--rust); }
+.stat-box.accent-teal  { border-top: 2.5px solid var(--teal); }
+.stat-box.accent-blue  { border-top: 2.5px solid var(--blue); }
+.stat-box.accent-gold  { border-top: 2.5px solid var(--gold); }
+.stat-box.accent-ink   { border-top: 2.5px solid var(--ink3); }
+
+/* ================================================================
+   HIGHLIGHT PANEL (reading / speaking time)
+================================================================ */
+.highlight-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.time-card {
+  border-radius: var(--r-md);
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.time-card.reading-card {
+  background: var(--blue-l);
+  border: 1px solid rgba(37,99,235,.15);
+  border-left: 3px solid var(--blue);
+}
+
+.time-card.speaking-card {
+  background: var(--gold-l);
+  border: 1px solid rgba(176,125,43,.15);
+  border-left: 3px solid var(--gold);
+}
+
+.time-card .tc-icon {
+  font-size: 1.25rem;
+  margin-bottom: 2px;
+}
+
+.time-card .tc-label {
+  font-family: var(--mono);
+  font-size: .66rem;
+  font-weight: 500;
+  color: var(--ink4);
+  text-transform: uppercase;
+  letter-spacing: .9px;
+}
+
+.time-card .tc-value {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -.3px;
+  line-height: 1.2;
+}
+
+.time-card.reading-card .tc-value  { color: var(--blue); }
+.time-card.speaking-card .tc-value { color: var(--gold); }
+
+.time-card .tc-sub {
+  font-size: .72rem;
+  color: var(--ink3);
+  margin-top: 1px;
+}
+
+/* ================================================================
+   RIGHT SIDEBAR
+================================================================ */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ================================================================
+   SIDEBAR CARDS (keyword density, word details, freq list)
+================================================================ */
+.side-card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.side-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .9rem 1.25rem .8rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+
+.side-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--serif);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -.2px;
+}
+
+.side-card-title .icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.side-card-body {
+  padding: 1.1rem 1.25rem;
+}
+
+/* ================================================================
+   KEYWORD DENSITY
+================================================================ */
+.keyword-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.keyword-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.keyword-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.keyword-word {
+  font-family: var(--mono);
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--ink2);
+  letter-spacing: -.2px;
+}
+
+.keyword-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.keyword-count {
+  font-family: var(--mono);
+  font-size: .68rem;
+  color: var(--ink4);
+}
+
+.keyword-pct {
+  font-family: var(--mono);
+  font-size: .68rem;
+  font-weight: 500;
+  color: var(--teal);
+}
+
+.kw-bar {
+  height: 5px;
+  background: var(--cream2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.kw-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--teal), #4ab8aa);
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+.kw-empty {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--ink4);
+  text-align: center;
+  padding: 1.5rem 0;
+  font-style: italic;
+}
+
+/* ================================================================
+   WORD DETAILS (longest, shortest, avg length, unique)
+================================================================ */
+.detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .7rem 0;
+  border-bottom: 1px solid var(--border);
+  gap: 10px;
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label {
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--ink4);
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-family: var(--serif);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--ink2);
+  text-align: right;
+  word-break: break-all;
+  letter-spacing: -.2px;
+}
+
+.detail-value em {
+  font-style: italic;
+  color: var(--rust);
+}
+
+/* ================================================================
+   FREQUENT WORDS LIST
+================================================================ */
+.freq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.freq-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: .55rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.freq-item:last-child { border-bottom: none; }
+
+.freq-rank {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--cream2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: .62rem;
+  font-weight: 500;
+  color: var(--ink4);
+  flex-shrink: 0;
+}
+
+.freq-rank.top1 { background: var(--rust-l); color: var(--rust); }
+.freq-rank.top2 { background: var(--teal-l); color: var(--teal); }
+.freq-rank.top3 { background: var(--blue-l); color: var(--blue); }
+
+.freq-word {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--ink2);
+}
+
+.freq-bar-wrap {
+  flex: 1;
+  height: 4px;
+  background: var(--cream2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.freq-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--rust);
+  opacity: .55;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+
+.freq-count {
+  font-family: var(--mono);
+  font-size: .68rem;
+  color: var(--ink4);
+  flex-shrink: 0;
+  width: 24px;
+  text-align: right;
+}
+
+/* ================================================================
+   CHAR FREQUENCY SECTION (toggle)
+================================================================ */
+.char-freq-section {
+  margin-top: .75rem;
+  display: none;
+}
+
+.char-freq-section.visible { display: block; }
+
+.char-freq-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  margin-top: .75rem;
+}
+
+.char-freq-cell {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 5px 4px;
+  text-align: center;
+}
+
+.cfc-char {
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-weight: 500;
+  color: var(--ink2);
+}
+
+.cfc-count {
+  font-family: var(--mono);
+  font-size: .6rem;
+  color: var(--ink4);
+}
+
+.cfc-bar {
+  height: 3px;
+  background: var(--cream3);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 3px;
+}
+
+.cfc-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--rust);
+  opacity: .6;
+}
+
+/* ================================================================
+   TEAL HIGHLIGHT BOX
+================================================================ */
+.teal-box {
+  background: var(--teal-l);
+  border: 1px solid rgba(26,122,110,.15);
+  border-left: 3px solid var(--teal);
+  border-radius: var(--r-md);
+  padding: 1rem 1.1rem;
+  margin-top: 1rem;
+}
+
+.teal-box .tb-label {
+  font-family: var(--mono);
+  font-size: .66rem;
+  font-weight: 500;
+  color: var(--teal2);
+  text-transform: uppercase;
+  letter-spacing: .9px;
+  margin-bottom: .35rem;
+}
+
+.teal-box .tb-text {
+  font-size: .85rem;
+  color: var(--ink2);
+  line-height: 1.55;
+}
+
+/* ================================================================
+   PROGRESS BAR (vocabulary richness)
+================================================================ */
+.richness-bar-wrap {
+  margin-top: .5rem;
+}
+
+.richness-bar-track {
+  height: 8px;
+  background: var(--cream2);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: .4rem 0;
+}
+
+.richness-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--rust), var(--teal));
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+.richness-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: .62rem;
+  color: var(--ink4);
+}
+
+/* ================================================================
+   SCORE PILL
+================================================================ */
+.score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-family: var(--mono);
+  font-size: .7rem;
+  font-weight: 500;
+}
+
+.pill-good   { background: var(--teal-l); color: var(--teal); border: 1px solid rgba(26,122,110,.2); }
+.pill-avg    { background: var(--blue-l); color: var(--blue); border: 1px solid rgba(37,99,235,.2); }
+.pill-low    { background: var(--rust-l); color: var(--rust); border: 1px solid rgba(200,68,26,.2); }
+.pill-empty  { background: rgba(26,22,18,.05); color: var(--ink4); border: 1px solid var(--border); }
+
+/* ================================================================
+   TOAST
+================================================================ */
+#toast-container {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--sans);
+  font-size: .82rem;
+  font-weight: 500;
+  padding: 10px 18px;
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-md);
+  transform: translateX(80px);
+  opacity: 0;
+  transition: all .28s cubic-bezier(.4,0,.2,1);
+  pointer-events: auto;
+  max-width: 260px;
+}
+
+.toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* ================================================================
+   FOOTER
+================================================================ */
+footer {
+  background: var(--cream2);
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.footer-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: .9rem;
+}
+
+.footer-logo-box {
+  width: 28px; height: 28px;
+  background: var(--rust);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-size: .85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.footer-logo-name {
+  font-family: var(--serif);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--ink2);
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: .2rem .75rem;
+  margin-bottom: .85rem;
+  list-style: none;
+}
+
+.footer-links a {
+  font-size: .78rem;
+  color: var(--ink4);
+  text-decoration: none;
+  transition: color .18s;
+}
+
+.footer-links a:hover { color: var(--rust); }
+
+.footer-copy {
+  font-size: .75rem;
+  color: var(--ink4);
+  font-family: var(--mono);
+}
+
+/* ================================================================
+   UTILITY
+================================================================ */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+@media (max-width: 960px) {
+  .main-wrap {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .navbar { padding: 0 1.25rem; }
+  .nav-links, .nav-cta { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 62px; left: 0; right: 0;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1.25rem 1.25rem;
+    gap: .25rem;
+    box-shadow: var(--shadow-md);
+  }
+  .nav-links.open + .nav-cta { display: flex; padding: 0 1.25rem 1rem; }
+  .page-header { padding: 2.25rem 1.25rem 2rem; }
+  .main-wrap { padding: 1.5rem 1.25rem 3rem; gap: 1.25rem; }
+  .tool-inner { padding: 1.25rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .highlight-panel { grid-template-columns: 1fr; }
+  .sidebar { grid-template-columns: 1fr; }
+  .char-freq-grid { grid-template-columns: repeat(5, 1fr); }
+  footer { padding: 2rem 1.25rem; }
+}
+
+@media (max-width: 400px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-box .s-value { font-size: 1.45rem; }
+}
+
+/* ================================================================
+   NUMBER FLASH ANIMATION
+================================================================ */
+@keyframes numFlash {
+  0%   { color: var(--ink); }
+  30%  { color: var(--rust); transform: scale(1.06); }
+  100% { color: var(--ink); transform: scale(1); }
+}
+
+.s-value.flash {
+  animation: numFlash .38s ease forwards;
+  display: inline-block;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="navbar-inner">
+    <a href="#" class="nav-logo" aria-label="ResearchToolsLab home">
+      <div class="nav-logo-box" aria-hidden="true">R</div>
+      <span class="nav-logo-name">ResearchToolsLab</span>
+    </a>
+
+    <ul class="nav-links" id="nav-links" role="list">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Citation Tools</a></li>
+      <li><a href="#" class="active">Text Tools</a></li>
+      <li><a href="#">Writing Aids</a></li>
+      <li><a href="#">Blog</a></li>
+    </ul>
+
+    <a href="#" class="btn btn-gen nav-cta" aria-label="Get started with ResearchToolsLab">
+      Get Started
+    </a>
+
+    <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     PAGE HEADER
+============================================================ -->
+<header class="page-header" role="banner">
+  <div class="page-header-inner">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="#">Home</a>
+      <span class="sep" aria-hidden="true">›</span>
+      <a href="#">Text Tools</a>
+      <span class="sep" aria-hidden="true">›</span>
+      <span aria-current="page">Word Analyzer</span>
+    </nav>
+
+    <!-- Title -->
+    <h1>Word &amp; Text <em>Analyzer</em></h1>
+
+    <p class="subtitle">
+      Paste or type any text to get instant, detailed statistics — word counts,
+      reading time, keyword density, and deep linguistic metrics, all in real time.
+    </p>
+
+    <!-- Badge pills -->
+    <div class="badge-row" role="list" aria-label="Tool features">
+      <span class="badge-pill badge-teal" role="listitem">✦ Real-Time Analysis</span>
+      <span class="badge-pill badge-rust" role="listitem">✦ Keyword Density</span>
+      <span class="badge-pill badge-blue" role="listitem">✦ Reading Time</span>
+      <span class="badge-pill badge-gold" role="listitem">✦ Speaking Time</span>
+      <span class="badge-pill badge-ink"  role="listitem">✦ No Sign-Up</span>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     MAIN TOOL AREA
+============================================================ -->
+<main class="main-wrap" id="main-content" role="main">
+
+  <!-- ===================== LEFT: TOOL CARD ===================== -->
+  <div>
+    <div class="tool-card">
+      <div class="tool-inner">
+
+        <!-- Input label + action buttons -->
+        <div class="input-label">
+          <label class="input-label-text" for="text-input">Your Text</label>
+          <div class="input-actions">
+            <button class="btn btn-ghost btn-icon" id="btn-copy" title="Copy text" aria-label="Copy text to clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+            <button class="btn btn-ghost btn-icon" id="btn-paste" title="Paste from clipboard" aria-label="Paste text from clipboard">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+              Paste
+            </button>
+            <button class="btn btn-ghost btn-icon" id="btn-sample" title="Load sample text" aria-label="Load sample text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Sample
+            </button>
+            <button class="btn btn-ghost btn-icon" id="btn-clear" title="Clear text" aria-label="Clear all text" style="color:var(--rust);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Textarea -->
+        <div class="textarea-wrap">
+          <textarea
+            id="text-input"
+            placeholder="Type or paste your text here to begin analysis…"
+            aria-label="Text input area for analysis"
+            aria-describedby="char-counter"
+            spellcheck="true"
+            autocorrect="off"
+          ></textarea>
+          <span class="char-counter" id="char-counter" aria-live="polite" aria-label="Character count">0 chars</span>
+        </div>
+
+        <!-- Toggle options -->
+        <div class="options-bar" role="group" aria-label="Analysis options">
+          <label class="toggle-wrap" for="opt-stopwords" title="Exclude common words like 'the', 'and', 'is' from keyword analysis">
+            <input type="checkbox" id="opt-stopwords" checked />
+            <span class="toggle-chip"><span class="dot"></span>Exclude Stop Words</span>
+          </label>
+          <label class="toggle-wrap" for="opt-spaces" title="Toggle whether spaces are included in character count">
+            <input type="checkbox" id="opt-spaces" />
+            <span class="toggle-chip"><span class="dot"></span>Chars Without Spaces</span>
+          </label>
+          <label class="toggle-wrap" for="opt-charfreq" title="Show character frequency breakdown">
+            <input type="checkbox" id="opt-charfreq" />
+            <span class="toggle-chip"><span class="dot"></span>Char Frequency</span>
+          </label>
+          <label class="toggle-wrap" for="opt-case" title="Treat uppercase and lowercase as the same word">
+            <input type="checkbox" id="opt-case" checked />
+            <span class="toggle-chip"><span class="dot"></span>Ignore Case</span>
+          </label>
+        </div>
+
+      </div><!-- /tool-inner -->
+
+      <!-- Divider inside card -->
+      <div style="height:1px;background:var(--border);"></div>
+
+      <!-- Stats section -->
+      <div class="tool-inner">
+
+        <!-- Quick stats heading -->
+        <div class="quick-stats-heading">
+          <span class="section-label">Core Statistics</span>
+          <span class="score-pill pill-empty" id="vocab-pill">—</span>
+        </div>
+
+        <!-- 6-stat grid -->
+        <div class="stats-grid" role="region" aria-label="Core text statistics" aria-live="polite" aria-atomic="false">
+
+          <div class="stat-box accent-rust">
+            <span class="s-label">Words</span>
+            <span class="s-value" id="st-words" aria-label="Word count">0</span>
+            <span class="s-sub" id="st-unique-sub">0 unique</span>
+          </div>
+
+          <div class="stat-box accent-teal">
+            <span class="s-label" id="chars-label">Characters</span>
+            <span class="s-value" id="st-chars" aria-label="Character count">0</span>
+            <span class="s-sub" id="chars-sub">incl. spaces</span>
+          </div>
+
+          <div class="stat-box accent-blue">
+            <span class="s-label">Sentences</span>
+            <span class="s-value" id="st-sentences" aria-label="Sentence count">0</span>
+            <span class="s-sub" id="st-avg-sent-sub">0 avg words</span>
+          </div>
+
+          <div class="stat-box accent-gold">
+            <span class="s-label">Paragraphs</span>
+            <span class="s-value" id="st-paragraphs" aria-label="Paragraph count">0</span>
+            <span class="s-sub" id="st-avg-para-sub">0 avg words</span>
+          </div>
+
+          <div class="stat-box accent-ink">
+            <span class="s-label">Lines</span>
+            <span class="s-value" id="st-lines" aria-label="Line count">0</span>
+            <span class="s-sub" id="st-spaces-sub">0 spaces</span>
+          </div>
+
+          <div class="stat-box accent-rust">
+            <span class="s-label">Avg Word Len</span>
+            <span class="s-value" id="st-avgword" aria-label="Average word length">0</span>
+            <span class="s-sub">characters</span>
+          </div>
+
+        </div><!-- /stats-grid -->
+
+        <!-- Reading / speaking time -->
+        <div class="highlight-panel" role="region" aria-label="Time estimates" aria-live="polite">
+          <div class="time-card reading-card">
+            <span class="tc-icon" aria-hidden="true">📖</span>
+            <span class="tc-label">Reading Time</span>
+            <span class="tc-value" id="time-read">—</span>
+            <span class="tc-sub">at ~200 words/min</span>
+          </div>
+          <div class="time-card speaking-card">
+            <span class="tc-icon" aria-hidden="true">🎙️</span>
+            <span class="tc-label">Speaking Time</span>
+            <span class="tc-value" id="time-speak">—</span>
+            <span class="tc-sub">at ~130 words/min</span>
+          </div>
+        </div>
+
+        <!-- Vocabulary richness bar -->
+        <div class="teal-box" id="richness-box" style="margin-top:1.1rem;">
+          <div class="tb-label">Vocabulary Richness (Type-Token Ratio)</div>
+          <div class="richness-bar-wrap">
+            <div class="richness-bar-track">
+              <div class="richness-bar-fill" id="richness-bar" style="width:0%"></div>
+            </div>
+            <div class="richness-labels">
+              <span>Repetitive</span>
+              <span id="richness-pct" style="color:var(--ink2);font-weight:500;">—</span>
+              <span>Diverse</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Character frequency (optional) -->
+        <div class="char-freq-section" id="char-freq-section">
+          <div style="height:1px;background:var(--border);margin:1.25rem 0;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem;">
+            <span class="section-label">Character Frequency</span>
+            <span class="score-pill pill-avg" id="char-freq-total-label">—</span>
+          </div>
+          <div class="char-freq-grid" id="char-freq-grid" aria-label="Character frequency breakdown" aria-live="polite"></div>
+        </div>
+
+      </div><!-- /tool-inner stats -->
+    </div><!-- /tool-card -->
+  </div><!-- /left col -->
+
+  <!-- ===================== RIGHT: SIDEBAR ===================== -->
+  <aside class="sidebar" role="complementary" aria-label="Analysis details">
+
+    <!-- Keyword Density -->
+    <div class="side-card">
+      <div class="side-card-header">
+        <span class="side-card-title">
+          <span class="icon" aria-hidden="true">🏷️</span> Keyword Density
+        </span>
+        <span class="badge-pill badge-teal">Top 5</span>
+      </div>
+      <div class="side-card-body">
+        <div class="keyword-list" id="keyword-list" role="list" aria-label="Top keywords" aria-live="polite">
+          <p class="kw-empty">Start typing to see keyword density…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Word Details -->
+    <div class="side-card">
+      <div class="side-card-header">
+        <span class="side-card-title">
+          <span class="icon" aria-hidden="true">🔬</span> Word Details
+        </span>
+      </div>
+      <div class="side-card-body" style="padding:0 1.25rem;">
+        <div class="detail-list" role="list" aria-label="Word details" aria-live="polite">
+          <div class="detail-row" role="listitem">
+            <span class="detail-label">Longest</span>
+            <span class="detail-value" id="wd-longest">—</span>
+          </div>
+          <div class="detail-row" role="listitem">
+            <span class="detail-label">Shortest</span>
+            <span class="detail-value" id="wd-shortest">—</span>
+          </div>
+          <div class="detail-row" role="listitem">
+            <span class="detail-label">Unique</span>
+            <span class="detail-value" id="wd-unique">—</span>
+          </div>
+          <div class="detail-row" role="listitem">
+            <span class="detail-label">Avg Length</span>
+            <span class="detail-value" id="wd-avglen">—</span>
+          </div>
+          <div class="detail-row" role="listitem">
+            <span class="detail-label">Spaces</span>
+            <span class="detail-value" id="wd-spaces">—</span>
+          </div>
+          <div class="detail-row" role="listitem">
+            <span class="detail-label">Numbers</span>
+            <span class="detail-value" id="wd-numbers">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Most Frequent Words -->
+    <div class="side-card">
+      <div class="side-card-header">
+        <span class="side-card-title">
+          <span class="icon" aria-hidden="true">📊</span> Most Frequent
+        </span>
+        <span class="badge-pill badge-rust">Top 10</span>
+      </div>
+      <div class="side-card-body" style="padding:0 1.25rem;">
+        <div class="freq-list" id="freq-list" role="list" aria-label="Most frequent words" aria-live="polite">
+          <p class="kw-empty" style="padding:.75rem 0 .5rem;">No data yet…</p>
+        </div>
+      </div>
+    </div>
+
+  </aside><!-- /sidebar -->
+</main><!-- /main-wrap -->
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <div class="footer-logo-box" aria-hidden="true">R</div>
+      <span class="footer-logo-name">ResearchToolsLab</span>
+    </div>
+    <ul class="footer-links" role="list">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Tools</a></li>
+      <li><a href="#">Blog</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <p class="footer-copy">© 2025 ResearchToolsLab · Built for researchers, writers &amp; academics.</p>
+  </div>
+</footer>
+
+<!-- Toast container -->
+<div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ================================================================
+   STOP WORDS
+================================================================ */
+const STOP_WORDS = new Set([
+  "a","about","above","after","again","against","all","also","am","an","and",
+  "any","are","aren't","as","at","be","because","been","before","being","below",
+  "between","both","but","by","can","can't","cannot","could","couldn't","did",
+  "didn't","do","does","doesn't","doing","don't","down","during","each","few",
+  "for","from","further","get","got","had","hadn't","has","hasn't","have",
+  "haven't","having","he","he'd","he'll","he's","her","here","here's","hers",
+  "herself","him","himself","his","how","how's","i","i'd","i'll","i'm","i've",
+  "if","in","into","is","isn't","it","it's","its","itself","just","let's","me",
+  "more","most","mustn't","my","myself","no","nor","not","now","of","off","on",
+  "once","only","or","other","ought","our","ours","ourselves","out","over","own",
+  "same","shan't","she","she'd","she'll","she's","should","shouldn't","so",
+  "some","such","than","that","that's","the","their","theirs","them","themselves",
+  "then","there","there's","these","they","they'd","they'll","they're","they've",
+  "this","those","through","to","too","under","until","up","very","was","wasn't",
+  "we","we'd","we'll","we're","we've","were","weren't","what","what's","when",
+  "when's","where","where's","which","while","who","who's","whom","why","why's",
+  "will","with","won't","would","wouldn't","you","you'd","you'll","you're",
+  "you've","your","yours","yourself","yourselves","s","t","ll","re","ve","m","d"
+]);
+
+/* ================================================================
+   SAMPLE TEXT
+================================================================ */
+const SAMPLE_TEXT = `Academic writing demands precision, clarity, and a firm command of language. Whether you are composing a research paper, drafting an essay, or preparing a thesis, the quality of your prose fundamentally shapes how readers perceive your ideas.
+
+One of the most overlooked aspects of strong academic writing is vocabulary richness. A text that relies on a wide variety of words signals intellectual depth, while repetitive prose can suggest shallow thinking. Skilled writers balance accessibility with sophistication — choosing the right word for each context rather than defaulting to familiar phrases.
+
+Sentence structure is equally important. Short sentences drive momentum. Longer, more complex sentences can articulate nuanced relationships between ideas, but they must be constructed with care to avoid confusion. The best writers vary sentence length deliberately, creating rhythm that carries the reader forward.
+
+Reading broadly is perhaps the single most effective strategy for improving your own writing. Every text you read exposes you to new vocabulary, new rhetorical strategies, and new ways of organizing thought. Academic journals, long-form journalism, and classic literature all offer lessons that can sharpen your prose.
+
+Finally, revision is where good writing is made. First drafts are meant to be imperfect. The real work — the careful rereading, the cutting of unnecessary words, the restructuring of muddled paragraphs — happens in the revision process. Treat every draft as an opportunity to discover what you really mean to say.`;
+
+/* ================================================================
+   DOM REFS
+================================================================ */
+const textInput     = document.getElementById('text-input');
+const charCounter   = document.getElementById('char-counter');
+const btnClear      = document.getElementById('btn-clear');
+const btnCopy       = document.getElementById('btn-copy');
+const btnPaste      = document.getElementById('btn-paste');
+const btnSample     = document.getElementById('btn-sample');
+const optStopwords  = document.getElementById('opt-stopwords');
+const optSpaces     = document.getElementById('opt-spaces');
+const optCharFreq   = document.getElementById('opt-charfreq');
+const optCase       = document.getElementById('opt-case');
+const charFreqSec   = document.getElementById('char-freq-section');
+const hamburger     = document.getElementById('nav-hamburger');
+const navLinks      = document.getElementById('nav-links');
+
+/* Stat elements */
+const S = {
+  words:        document.getElementById('st-words'),
+  chars:        document.getElementById('st-chars'),
+  sentences:    document.getElementById('st-sentences'),
+  paragraphs:   document.getElementById('st-paragraphs'),
+  lines:        document.getElementById('st-lines'),
+  avgWord:      document.getElementById('st-avgword'),
+  uniqueSub:    document.getElementById('st-unique-sub'),
+  charsLabel:   document.getElementById('chars-label'),
+  charsSub:     document.getElementById('chars-sub'),
+  avgSentSub:   document.getElementById('st-avg-sent-sub'),
+  avgParaSub:   document.getElementById('st-avg-para-sub'),
+  spacesSub:    document.getElementById('st-spaces-sub'),
+  timeRead:     document.getElementById('time-read'),
+  timeSpeak:    document.getElementById('time-speak'),
+  richBar:      document.getElementById('richness-bar'),
+  richPct:      document.getElementById('richness-pct'),
+  vocabPill:    document.getElementById('vocab-pill'),
+  keyList:      document.getElementById('keyword-list'),
+  freqList:     document.getElementById('freq-list'),
+  wdLongest:    document.getElementById('wd-longest'),
+  wdShortest:   document.getElementById('wd-shortest'),
+  wdUnique:     document.getElementById('wd-unique'),
+  wdAvgLen:     document.getElementById('wd-avglen'),
+  wdSpaces:     document.getElementById('wd-spaces'),
+  wdNumbers:    document.getElementById('wd-numbers'),
+  charFreqGrid: document.getElementById('char-freq-grid'),
+  charFreqLabel:document.getElementById('char-freq-total-label'),
+};
+
+/* ================================================================
+   STATE
+================================================================ */
+let debounceTimer = null;
+let lastValues    = {};   // for flash-on-change detection
+
+/* ================================================================
+   UTILITY: format time duration
+================================================================ */
+function fmtTime(seconds) {
+  if (seconds <= 0) return '—';
+  if (seconds < 60) return `${Math.ceil(seconds)}s`;
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  if (m >= 60) {
+    const h  = Math.floor(m / 60);
+    const rm = m % 60;
+    return rm > 0 ? `${h}h ${rm}m` : `${h}h`;
+  }
+  return s > 0 ? `${m}m ${s}s` : `${m}m`;
+}
+
+/* UTILITY: format large numbers with commas */
+function fmtNum(n) {
+  return n.toLocaleString('en-US');
+}
+
+/* ================================================================
+   UTILITY: set value with flash animation
+================================================================ */
+function setVal(el, val) {
+  const strVal = String(val);
+  if (lastValues[el.id] !== strVal) {
+    lastValues[el.id] = strVal;
+    el.textContent = strVal;
+    el.classList.remove('flash');
+    void el.offsetWidth; // reflow
+    el.classList.add('flash');
+    // remove after animation
+    setTimeout(() => el.classList.remove('flash'), 400);
+  }
+}
+
+/* ================================================================
+   CORE ANALYSIS FUNCTION
+================================================================ */
+function analyzeText(raw) {
+  /* ---- Basic flags ---- */
+  const ignoreCase = optCase.checked;
+  const exclStops  = optStopwords.checked;
+
+  /* ---- Characters ---- */
+  const charsWithSpaces    = raw.length;
+  const charsWithoutSpaces = raw.replace(/\s/g, '').length;
+  const spaceCount         = (raw.match(/[ \t\r\n]/g) || []).length;
+
+  /* ---- Lines ---- */
+  const lineCount = raw === '' ? 0 : raw.split('\n').length;
+
+  /* ---- Paragraphs ---- */
+  const paragraphs = raw.trim() === ''
+    ? []
+    : raw.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
+  const paragraphCount = paragraphs.length;
+
+  /* ---- Sentences ---- */
+  // Match sequences ending in . ! ? (handles ellipsis)
+  const sentenceMatches = raw.trim() === ''
+    ? []
+    : raw.match(/[^.!?]*[.!?]+/g) || [];
+  const sentenceCount = sentenceMatches.filter(s => s.trim().length > 0).length;
+
+  /* ---- Words ---- */
+  // Extract words: sequences of letters, digits, apostrophes
+  const wordTokens = raw.match(/\b[\w']+\b/g) || [];
+  const wordCount  = wordTokens.length;
+
+  /* ---- Normalise for analysis ---- */
+  const normalWords = wordTokens.map(w => ignoreCase ? w.toLowerCase() : w);
+
+  /* ---- Unique words ---- */
+  const uniqueSet   = new Set(normalWords);
+  const uniqueCount = uniqueSet.size;
+
+  /* ---- Avg word length ---- */
+  const totalWordChars = wordTokens.reduce((acc, w) => acc + w.replace(/[^a-zA-Z]/g, '').length, 0);
+  const avgWordLength  = wordCount > 0 ? (totalWordChars / wordCount) : 0;
+
+  /* ---- Numbers in text ---- */
+  const numberTokens = raw.match(/\b\d+(\.\d+)?\b/g) || [];
+  const numberCount  = numberTokens.length;
+
+  /* ---- Longest / shortest words ---- */
+  let longestWord  = '';
+  let shortestWord = '';
+  if (wordTokens.length > 0) {
+    const pureWords = wordTokens.filter(w => /^[a-zA-Z]+$/.test(w));
+    if (pureWords.length > 0) {
+      longestWord  = pureWords.reduce((a, b) => b.length > a.length ? b : a, '');
+      shortestWord = pureWords.reduce((a, b) => b.length < a.length ? b : a, pureWords[0]);
+    }
+  }
+
+  /* ---- Word frequency map ---- */
+  const freqMap = {};
+  for (const w of normalWords) {
+    freqMap[w] = (freqMap[w] || 0) + 1;
+  }
+
+  /* ---- All words sorted by frequency ---- */
+  const allWordsSorted = Object.entries(freqMap).sort((a, b) => b[1] - a[1]);
+
+  /* ---- Keyword density (optional stop-word exclusion) ---- */
+  const filtered = exclStops
+    ? allWordsSorted.filter(([w]) => !STOP_WORDS.has(w.toLowerCase()) && /^[a-zA-Z]/.test(w))
+    : allWordsSorted.filter(([w]) => /^[a-zA-Z]/.test(w));
+  const keywords  = filtered.slice(0, 5);
+  const topWords  = allWordsSorted.filter(([w]) => /^[a-zA-Z]/.test(w)).slice(0, 10);
+
+  /* ---- Reading / speaking time ---- */
+  const readSec  = wordCount > 0 ? (wordCount / 200) * 60 : 0;
+  const speakSec = wordCount > 0 ? (wordCount / 130) * 60 : 0;
+
+  /* ---- Vocabulary richness (TTR) ---- */
+  const ttr = wordCount > 0 ? (uniqueCount / wordCount) : 0;
+
+  /* ---- Avg words per sentence / paragraph ---- */
+  const avgWordsPerSentence  = sentenceCount  > 0 ? (wordCount / sentenceCount)  : 0;
+  const avgWordsPerParagraph = paragraphCount > 0 ? (wordCount / paragraphCount) : 0;
+
+  /* ---- Character frequency ---- */
+  const charFreq = {};
+  for (const ch of raw.replace(/\s/g, '').toLowerCase()) {
+    if (/[a-z]/.test(ch)) charFreq[ch] = (charFreq[ch] || 0) + 1;
+  }
+  const charFreqSorted = Object.entries(charFreq).sort((a, b) => b[1] - a[1]).slice(0, 18);
+
+  return {
+    charsWithSpaces, charsWithoutSpaces, spaceCount,
+    lineCount, paragraphCount, sentenceCount,
+    wordCount, uniqueCount, avgWordLength, numberCount,
+    longestWord, shortestWord,
+    freqMap, keywords, topWords,
+    readSec, speakSec, ttr,
+    avgWordsPerSentence, avgWordsPerParagraph,
+    charFreqSorted,
+  };
+}
+
+/* ================================================================
+   UPDATE UI
+================================================================ */
+function updateUI(r, raw) {
+  /* --- Character counter in textarea --- */
+  charCounter.textContent = `${fmtNum(r.charsWithSpaces)} chars`;
+
+  /* --- Chars toggle (with/without spaces) --- */
+  const showWithSpaces = !optSpaces.checked;
+  setVal(S.chars, fmtNum(showWithSpaces ? r.charsWithSpaces : r.charsWithoutSpaces));
+  S.charsLabel.textContent = showWithSpaces ? 'Characters' : 'Chars (no sp.)';
+  S.charsSub.textContent   = showWithSpaces ? 'incl. spaces' : 'excl. spaces';
+
+  /* --- Core stats --- */
+  setVal(S.words,      fmtNum(r.wordCount));
+  setVal(S.sentences,  fmtNum(r.sentenceCount));
+  setVal(S.paragraphs, fmtNum(r.paragraphCount));
+  setVal(S.lines,      fmtNum(r.lineCount));
+  setVal(S.avgWord,    r.wordCount > 0 ? r.avgWordLength.toFixed(1) : '0');
+
+  /* Sub-labels */
+  S.uniqueSub.textContent  = `${fmtNum(r.uniqueCount)} unique`;
+  S.avgSentSub.textContent = r.sentenceCount > 0
+    ? `${r.avgWordsPerSentence.toFixed(1)} avg words`
+    : '0 avg words';
+  S.avgParaSub.textContent = r.paragraphCount > 0
+    ? `${r.avgWordsPerParagraph.toFixed(0)} avg words`
+    : '0 avg words';
+  S.spacesSub.textContent  = `${fmtNum(r.spaceCount)} spaces`;
+
+  /* --- Time estimates --- */
+  S.timeRead.textContent  = fmtTime(r.readSec);
+  S.timeSpeak.textContent = fmtTime(r.speakSec);
+
+  /* --- Vocabulary richness --- */
+  const richPct = Math.round(r.ttr * 100);
+  S.richBar.style.width   = `${richPct}%`;
+  S.richPct.textContent   = r.wordCount > 0 ? `${richPct}%` : '—';
+
+  /* Vocab pill */
+  const pill = S.vocabPill;
+  pill.className = 'score-pill';
+  if (r.wordCount === 0)   { pill.classList.add('pill-empty'); pill.textContent = '—'; }
+  else if (richPct >= 65)  { pill.classList.add('pill-good');  pill.textContent = '✦ Rich Vocab'; }
+  else if (richPct >= 40)  { pill.classList.add('pill-avg');   pill.textContent = '◆ Avg Vocab'; }
+  else                     { pill.classList.add('pill-low');   pill.textContent = '▼ Repetitive'; }
+
+  /* --- Word details (sidebar) --- */
+  S.wdLongest.innerHTML  = r.longestWord  ? `<em>${escHtml(r.longestWord)}</em>`  : '—';
+  S.wdShortest.innerHTML = r.shortestWord ? `<em>${escHtml(r.shortestWord)}</em>` : '—';
+  S.wdUnique.textContent = r.wordCount > 0 ? `${fmtNum(r.uniqueCount)} / ${fmtNum(r.wordCount)}` : '—';
+  S.wdAvgLen.textContent = r.wordCount > 0 ? `${r.avgWordLength.toFixed(2)} chars` : '—';
+  S.wdSpaces.textContent = fmtNum(r.spaceCount);
+  S.wdNumbers.textContent= r.numberCount > 0 ? fmtNum(r.numberCount) : '0';
+
+  /* --- Keywords --- */
+  renderKeywords(r.keywords, r.wordCount);
+
+  /* --- Frequent words list --- */
+  renderFreqList(r.topWords, r.wordCount);
+
+  /* --- Char frequency --- */
+  if (optCharFreq.checked) {
+    charFreqSec.classList.add('visible');
+    renderCharFreq(r.charFreqSorted, r.charsWithoutSpaces);
+  } else {
+    charFreqSec.classList.remove('visible');
+  }
+}
+
+/* ================================================================
+   RENDER: Keyword Density
+================================================================ */
+function renderKeywords(keywords, totalWords) {
+  if (!keywords.length) {
+    S.keyList.innerHTML = '<p class="kw-empty">Start typing to see keyword density…</p>';
+    return;
+  }
+
+  const maxCount = keywords[0][1];
+  S.keyList.innerHTML = keywords.map(([word, count], i) => {
+    const pct    = totalWords > 0 ? ((count / totalWords) * 100) : 0;
+    const barPct = maxCount  > 0  ? ((count / maxCount)  * 100) : 0;
+    const rankLabels = ['🥇','🥈','🥉','4','5'];
+    return `
+      <div class="keyword-item" role="listitem">
+        <div class="keyword-row">
+          <span class="keyword-word">${escHtml(word)}</span>
+          <div class="keyword-meta">
+            <span class="keyword-count">${count}×</span>
+            <span class="keyword-pct">${pct.toFixed(2)}%</span>
+          </div>
+        </div>
+        <div class="kw-bar" title="${pct.toFixed(2)}% density">
+          <div class="kw-bar-fill" style="width:${barPct.toFixed(1)}%"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ================================================================
+   RENDER: Most Frequent Words
+================================================================ */
+function renderFreqList(topWords, totalWords) {
+  if (!topWords.length) {
+    S.freqList.innerHTML = '<p class="kw-empty" style="padding:.75rem 0 .5rem;">No data yet…</p>';
+    return;
+  }
+
+  const maxCount = topWords[0][1];
+  S.freqList.innerHTML = topWords.map(([word, count], i) => {
+    const barPct   = maxCount > 0 ? ((count / maxCount) * 100) : 0;
+    const rankClass= i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    return `
+      <div class="freq-item" role="listitem">
+        <span class="freq-rank ${rankClass}">${i + 1}</span>
+        <span class="freq-word">${escHtml(word)}</span>
+        <div class="freq-bar-wrap">
+          <div class="freq-bar-fill" style="width:${barPct.toFixed(1)}%"></div>
+        </div>
+        <span class="freq-count">${count}</span>
+      </div>`;
+  }).join('');
+}
+
+/* ================================================================
+   RENDER: Character Frequency
+================================================================ */
+function renderCharFreq(sorted, totalNonSpace) {
+  if (!sorted.length) {
+    S.charFreqGrid.innerHTML = '';
+    S.charFreqLabel.textContent = '—';
+    return;
+  }
+
+  S.charFreqLabel.textContent = `${sorted.length} unique`;
+  const maxCount = sorted[0][1];
+
+  S.charFreqGrid.innerHTML = sorted.map(([ch, count]) => {
+    const barPct = maxCount > 0 ? ((count / maxCount) * 100) : 0;
+    const pct    = totalNonSpace > 0 ? ((count / totalNonSpace) * 100).toFixed(1) : 0;
+    return `
+      <div class="char-freq-cell" title="${ch.toUpperCase()} — ${count} times (${pct}%)">
+        <div class="cfc-char">${escHtml(ch.toUpperCase())}</div>
+        <div class="cfc-count">${count}</div>
+        <div class="cfc-bar"><div class="cfc-bar-fill" style="width:${barPct.toFixed(0)}%"></div></div>
+      </div>`;
+  }).join('');
+}
+
+/* ================================================================
+   HTML ESCAPE
+================================================================ */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* ================================================================
+   MAIN INPUT HANDLER  (debounced ~120ms)
+================================================================ */
+function onInput() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    const raw    = textInput.value;
+    const result = analyzeText(raw);
+    updateUI(result, raw);
+  }, 120);
+}
+
+textInput.addEventListener('input', onInput);
+
+/* Re-run on option changes */
+[optStopwords, optSpaces, optCharFreq, optCase].forEach(el => {
+  el.addEventListener('change', onInput);
+});
+
+/* ================================================================
+   BUTTONS
+================================================================ */
+
+/* Clear */
+btnClear.addEventListener('click', () => {
+  textInput.value = '';
+  textInput.focus();
+  onInput();
+  showToast('Text cleared.');
+});
+
+/* Copy */
+btnCopy.addEventListener('click', async () => {
+  const text = textInput.value.trim();
+  if (!text) { showToast('Nothing to copy.'); return; }
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Copied to clipboard ✓');
+  } catch {
+    textInput.select();
+    document.execCommand('copy');
+    showToast('Copied ✓');
+  }
+});
+
+/* Paste */
+btnPaste.addEventListener('click', async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (!text) { showToast('Clipboard is empty.'); return; }
+    textInput.value = text;
+    onInput();
+    showToast('Pasted from clipboard ✓');
+  } catch {
+    showToast('Clipboard access denied. Please paste manually (Ctrl+V).');
+  }
+});
+
+/* Sample text */
+btnSample.addEventListener('click', () => {
+  textInput.value = SAMPLE_TEXT;
+  onInput();
+  textInput.scrollTop = 0;
+  showToast('Sample text loaded ✓');
+});
+
+/* ================================================================
+   HAMBURGER MENU
+================================================================ */
+hamburger.addEventListener('click', () => {
+  const isOpen = navLinks.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+});
+
+/* Close nav on outside click */
+document.addEventListener('click', (e) => {
+  if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+    navLinks.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+});
+
+/* ================================================================
+   TOAST
+================================================================ */
+const toastContainer = document.getElementById('toast-container');
+let toastTimeout;
+
+function showToast(message, duration = 2600) {
+  clearTimeout(toastTimeout);
+  // Remove existing toasts
+  toastContainer.querySelectorAll('.toast').forEach(t => t.remove());
+
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = message;
+  toastContainer.appendChild(t);
+
+  // Animate in
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => t.classList.add('show'));
+  });
+
+  toastTimeout = setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 300);
+  }, duration);
+}
+
+/* ================================================================
+   KEYBOARD SHORTCUT: Ctrl/Cmd+Shift+D → clear
+================================================================ */
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
+    e.preventDefault();
+    btnClear.click();
+  }
+});
+
+/* ================================================================
+   INIT
+================================================================ */
+// Run once on load to set zero-state
+onInput();
+
+// Announce tool ready
+console.log('%cResearchToolsLab — Word & Text Analyzer loaded ✓', 'color:#c8441a;font-weight:bold;font-size:13px;');
+</script>
+</body>
+</html>
